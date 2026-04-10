@@ -469,6 +469,16 @@ ul {
 .footer__bottom p:first-child {
     margin-bottom: 0.5rem;
 }
+.footer__bottom p:not(:first-child) {
+    margin-top: 0.5rem;
+}
+.footer__icp a {
+    color: rgba(255, 255, 255, 0.5);
+    transition: var(--transition);
+}
+.footer__icp a:hover {
+    color: var(--primary-light);
+}
 .scrolltop {
     position: fixed;
     right: 2rem;
