@@ -1,0 +1,248 @@
+/* ============================================
+   像素风虚拟空间 - 全局样式
+   风格：8-bit复古 + 2.5D等轴测视角
+   ============================================ */
+
+:root {
+    --bg-color: #2d2d44;
+    --grid-line: #4a4a6a;
+    --grid-fill: #3a3a52;
+    --grid-fill-alt: #353550;
+    --accent-color: #6c5ce7;
+    --text-color: #f0f0f0;
+    --pixel-border: #1a1a2e;
+    --panel-bg: rgba(26, 26, 46, 0.95);
+    --btn-primary: #6c5ce7;
+    --btn-hover: #a29bfe;
+    --success: #00b894;
+    --warning: #fdcb6e;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: var(--bg-color);
+    font-family: 'Press Start 2P', 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--text-color);
+}
+
+/* ============================================
+   游戏画布容器
+   ============================================ */
+#game-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    overflow: hidden;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* ============================================
+   手机控制端 (底部固定面板)
+   ============================================ */
+#mobile-control {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    background: var(--panel-bg);
+    border-top: 3px solid var(--pixel-border);
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* 头部：玩家信息 */
+.control-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed var(--grid-line);
+}
+
+.player-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--grid-fill);
+    border: 2px solid var(--accent-color);
+    image-rendering: pixelated;
+}
+
+.player-avatar canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.player-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.player-name {
+    font-size: 11px;
+    color: var(--accent-color);
+    text-shadow: 2px 2px 0 var(--pixel-border);
+}
+
+.player-status {
+    font-size: 9px;
+    color: var(--warning);
+}
+
+/* 输入区域 */
+.control-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.input-area {
+    display: flex;
+    gap: 8px;
+}
+
+#commandInput {
+    flex: 1;
+    padding: 10px 12px;
+    background: var(--grid-fill);
+    border: 2px solid var(--grid-line);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 10px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#commandInput:focus {
+    border-color: var(--accent-color);
+}
+
+#commandInput::placeholder {
+    color: #666;
+    font-size: 9px;
+}
+
+#sendBtn {
+    padding: 10px 16px;
+    background: var(--btn-primary);
+    border: 2px solid var(--pixel-border);
+    border-radius: 4px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.1s;
+    box-shadow: 0 3px 0 var(--pixel-border);
+}
+
+#sendBtn:active {
+    transform: translateY(3px);
+    box-shadow: 0 0 0 var(--pixel-border);
+}
+
+#sendBtn:hover {
+    background: var(--btn-hover);
+}
+
+/* 快捷按钮 */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.action-btn {
+    padding: 10px 4px;
+    background: var(--grid-fill);
+    border: 2px solid var(--grid-line);
+    border-radius: 4px;
+    color: var(--text-color);
+    font-family: inherit;
+    font-size: 9px;
+    cursor: pointer;
+    transition: all 0.1s;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.action-btn:hover {
+    background: var(--grid-line);
+    border-color: var(--accent-color);
+}
+
+.action-btn:active {
+    transform: translateY(2px);
+}
+
+/* 状态栏 */
+.status-bar {
+    text-align: center;
+    padding-top: 6px;
+    border-top: 1px solid var(--grid-line);
+}
+
+#statusText {
+    font-size: 9px;
+    color: var(--success);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* ============================================
+   响应式适配
+   ============================================ */
+@media (min-width: 768px) {
+    #mobile-control {
+        max-width: 480px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 12px 12px 0 0;
+        border-left: 3px solid var(--pixel-border);
+        border-right: 3px solid var(--pixel-border);
+    }
+}
+
+/* ============================================
+   文字气泡动画
+   ============================================ */
+@keyframes bubblePop {
+    0% { transform: scale(0) translateY(10px); opacity: 0; }
+    60% { transform: scale(1.1) translateY(-2px); opacity: 1; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes bubbleFade {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
