@@ -169,38 +169,101 @@ const Utils = {
 
     /**
      * 绘制像素气泡（支持缩放）
+     * 蓝色半透明背景 + 白色文字 + 用户名
      */
-    drawSpeechBubble(ctx, x, y, text, maxWidth = 120, zoom = 1) {
+    drawSpeechBubble(ctx, x, y, text, speaker = null, maxWidth = 120, zoom = 1) {
         const fontSize = Math.max(8, 10 * zoom);
+        const speakerFontSize = Math.max(6, 8 * zoom);
         ctx.font = `${fontSize}px 'Press Start 2P', monospace`;
         const metrics = ctx.measureText(text);
         const textWidth = Math.min(metrics.width, maxWidth * zoom);
+        
+        // 如果有说话者，计算说话者名字宽度
+        let speakerWidth = 0;
+        if (speaker) {
+            ctx.font = `${speakerFontSize}px 'Press Start 2P', monospace`;
+            speakerWidth = ctx.measureText(speaker).width;
+        }
+        
+        const contentWidth = Math.max(textWidth, speakerWidth);
         const padding = 8 * zoom;
-        const bubbleWidth = textWidth + padding * 2;
-        const bubbleHeight = 24 * zoom;
+        const bubbleWidth = contentWidth + padding * 2;
+        const lineHeight = 14 * zoom;
+        const speakerHeight = speaker ? speakerFontSize + 2 * zoom : 0;
+        const bubbleHeight = lineHeight + speakerHeight + padding;
+        const bubbleY = y - bubbleHeight - 12 * zoom;
         
-        // 气泡背景
-        ctx.fillStyle = 'rgba(255,255,255,0.95)';
-        ctx.fillRect(x - bubbleWidth/2, y - bubbleHeight - 8 * zoom, bubbleWidth, bubbleHeight);
-        
-        // 气泡边框（像素风格）
-        ctx.strokeStyle = '#1a1a2e';
-        ctx.lineWidth = Math.max(1, 2 * zoom);
-        ctx.strokeRect(x - bubbleWidth/2, y - bubbleHeight - 8 * zoom, bubbleWidth, bubbleHeight);
-        
-        // 小三角
+        // 气泡背景（蓝色半透明）
+        ctx.fillStyle = 'rgba(25, 118, 210, 0.85)';
         ctx.beginPath();
-        ctx.moveTo(x - 6 * zoom, y - 8 * zoom);
-        ctx.lineTo(x, y - 2 * zoom);
-        ctx.lineTo(x + 6 * zoom, y - 8 * zoom);
+        ctx.roundRect(
+            x - bubbleWidth / 2,
+            bubbleY,
+            bubbleWidth,
+            bubbleHeight,
+            4 * zoom
+        );
+        ctx.fill();
+        
+        // 气泡边框（浅蓝色发光）
+        ctx.save();
+        ctx.shadowColor = '#4fc3f7';
+        ctx.shadowBlur = 6 * zoom;
+        ctx.strokeStyle = 'rgba(79, 195, 247, 0.8)';
+        ctx.lineWidth = Math.max(1, 1.5 * zoom);
+        ctx.beginPath();
+        ctx.roundRect(
+            x - bubbleWidth / 2,
+            bubbleY,
+            bubbleWidth,
+            bubbleHeight,
+            4 * zoom
+        );
+        ctx.stroke();
+        ctx.restore();
+        
+        // 小三角（指向角色）
+        ctx.fillStyle = 'rgba(25, 118, 210, 0.85)';
+        ctx.beginPath();
+        ctx.moveTo(x - 6 * zoom, bubbleY + bubbleHeight);
+        ctx.lineTo(x, bubbleY + bubbleHeight + 6 * zoom);
+        ctx.lineTo(x + 6 * zoom, bubbleY + bubbleHeight);
         ctx.closePath();
         ctx.fill();
+        
+        // 三角边框
+        ctx.strokeStyle = 'rgba(79, 195, 247, 0.6)';
+        ctx.lineWidth = Math.max(1, zoom);
+        ctx.beginPath();
+        ctx.moveTo(x - 6 * zoom, bubbleY + bubbleHeight);
+        ctx.lineTo(x, bubbleY + bubbleHeight + 6 * zoom);
+        ctx.lineTo(x + 6 * zoom, bubbleY + bubbleHeight);
         ctx.stroke();
         
-        // 文字
-        ctx.fillStyle = '#1a1a2e';
+        // 绘制说话者名字（蓝色小字）
+        let textY = bubbleY + padding / 2 + lineHeight / 2;
+        if (speaker) {
+            ctx.font = `${speakerFontSize}px 'Press Start 2P', monospace`;
+            ctx.fillStyle = '#81d4fa';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(speaker, x, bubbleY + padding / 2 + speakerFontSize / 2);
+            textY = bubbleY + padding / 2 + speakerFontSize + lineHeight / 2 + 2 * zoom;
+        }
+        
+        // 绘制气泡文字（白色）
+        ctx.font = `${fontSize}px 'Press Start 2P', monospace`;
+        ctx.fillStyle = '#ffffff';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, x, y - bubbleHeight/2 - 8 * zoom);
+        ctx.fillText(text, x, textY);
+        
+        // 文字发光效果
+        ctx.save();
+        ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+        ctx.shadowBlur = 4 * zoom;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(text, x, textY);
+        ctx.restore();
     }
 };

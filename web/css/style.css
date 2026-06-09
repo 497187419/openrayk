@@ -1,21 +1,29 @@
 /* ============================================
-   像素风虚拟空间 - 全局样式
-   风格：8-bit复古 + 2.5D等轴测视角
+   Antigravity 像素风虚拟空间 - 全局样式
+   风格：深蓝星空科技风 + 2.5D等轴测视角
    ============================================ */
 
 :root {
-    --bg-color: #2d2d44;
-    --grid-line: #4a4a6a;
-    --grid-fill: #3a3a52;
-    --grid-fill-alt: #353550;
-    --accent-color: #6c5ce7;
-    --text-color: #f0f0f0;
-    --pixel-border: #1a1a2e;
-    --panel-bg: rgba(26, 26, 46, 0.95);
-    --btn-primary: #6c5ce7;
-    --btn-hover: #a29bfe;
-    --success: #00b894;
-    --warning: #fdcb6e;
+    --bg-color: #0a0e27;
+    --bg-gradient-start: #0a0e27;
+    --bg-gradient-end: #1a1f4b;
+    --grid-line: #2a3f5f;
+    --grid-line-bright: #3a5f8f;
+    --grid-fill: #0f1535;
+    --grid-fill-alt: #121940;
+    --accent-color: #4fc3f7;
+    --accent-glow: rgba(79, 195, 247, 0.4);
+    --text-color: #e0e6ed;
+    --text-muted: #8b9bb4;
+    --pixel-border: #1a2a4a;
+    --panel-bg: rgba(10, 14, 39, 0.92);
+    --panel-border: rgba(79, 195, 247, 0.2);
+    --btn-primary: #4fc3f7;
+    --btn-hover: #81d4fa;
+    --success: #69f0ae;
+    --warning: #ffd54f;
+    --bubble-bg: rgba(25, 55, 95, 0.9);
+    --bubble-border: rgba(79, 195, 247, 0.5);
 }
 
 * {
@@ -47,6 +55,32 @@ html, body {
     height: 100%;
     z-index: 1;
     overflow: hidden;
+    background: linear-gradient(180deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+}
+
+/* 星空背景效果 */
+#game-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.9), transparent),
+        radial-gradient(2px 2px at 130px 80px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 160px 20px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 200px 60px, rgba(255,255,255,0.6), transparent),
+        radial-gradient(1px 1px at 250px 30px, rgba(255,255,255,0.8), transparent),
+        radial-gradient(2px 2px at 300px 90px, rgba(255,255,255,0.5), transparent),
+        radial-gradient(1px 1px at 350px 50px, rgba(255,255,255,0.7), transparent),
+        radial-gradient(2px 2px at 400px 70px, rgba(255,255,255,0.6), transparent);
+    background-size: 400px 100px;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
 }
 
 #gameCanvas {
@@ -55,10 +89,12 @@ html, body {
     height: 100%;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
+    position: relative;
+    z-index: 1;
 }
 
 /* ============================================
-   手机控制端 (底部固定面板)
+   任务面板 (底部固定面板)
    ============================================ */
 #mobile-control {
     position: fixed;
@@ -67,12 +103,13 @@ html, body {
     width: 100%;
     z-index: 100;
     background: var(--panel-bg);
-    border-top: 3px solid var(--pixel-border);
-    box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
+    border-top: 1px solid var(--panel-border);
+    box-shadow: 0 -4px 30px rgba(0,0,0,0.6), 0 -1px 0 rgba(79, 195, 247, 0.1);
     padding: 12px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    backdrop-filter: blur(10px);
 }
 
 /* 头部：玩家信息 */
@@ -81,7 +118,7 @@ html, body {
     align-items: center;
     gap: 10px;
     padding-bottom: 8px;
-    border-bottom: 2px dashed var(--grid-line);
+    border-bottom: 1px solid var(--panel-border);
 }
 
 .player-avatar {
@@ -89,6 +126,9 @@ html, body {
     height: 40px;
     background: var(--grid-fill);
     border: 2px solid var(--accent-color);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 10px var(--accent-glow);
     image-rendering: pixelated;
 }
 
@@ -107,7 +147,7 @@ html, body {
 .player-name {
     font-size: 11px;
     color: var(--accent-color);
-    text-shadow: 2px 2px 0 var(--pixel-border);
+    text-shadow: 0 0 8px var(--accent-glow);
 }
 
 .player-status {
@@ -130,45 +170,48 @@ html, body {
 #commandInput {
     flex: 1;
     padding: 10px 12px;
-    background: var(--grid-fill);
-    border: 2px solid var(--grid-line);
-    border-radius: 4px;
+    background: rgba(15, 21, 53, 0.8);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
     color: var(--text-color);
     font-family: inherit;
     font-size: 10px;
     outline: none;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
 }
 
 #commandInput:focus {
     border-color: var(--accent-color);
+    box-shadow: 0 0 8px var(--accent-glow);
 }
 
 #commandInput::placeholder {
-    color: #666;
+    color: var(--text-muted);
     font-size: 9px;
 }
 
 #sendBtn {
     padding: 10px 16px;
-    background: var(--btn-primary);
-    border: 2px solid var(--pixel-border);
-    border-radius: 4px;
-    color: #fff;
+    background: linear-gradient(135deg, var(--btn-primary), #29b6f6);
+    border: none;
+    border-radius: 6px;
+    color: #0a0e27;
     font-family: inherit;
     font-size: 10px;
+    font-weight: bold;
     cursor: pointer;
-    transition: all 0.1s;
-    box-shadow: 0 3px 0 var(--pixel-border);
+    transition: all 0.2s;
+    box-shadow: 0 0 15px var(--accent-glow);
 }
 
 #sendBtn:active {
-    transform: translateY(3px);
-    box-shadow: 0 0 0 var(--pixel-border);
+    transform: translateY(2px);
+    box-shadow: 0 0 8px var(--accent-glow);
 }
 
 #sendBtn:hover {
-    background: var(--btn-hover);
+    background: linear-gradient(135deg, var(--btn-hover), #4fc3f7);
+    box-shadow: 0 0 20px var(--accent-glow);
 }
 
 /* 快捷按钮 */
@@ -180,21 +223,22 @@ html, body {
 
 .action-btn {
     padding: 10px 4px;
-    background: var(--grid-fill);
-    border: 2px solid var(--grid-line);
-    border-radius: 4px;
+    background: rgba(15, 21, 53, 0.6);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
     color: var(--text-color);
     font-family: inherit;
     font-size: 9px;
     cursor: pointer;
-    transition: all 0.1s;
+    transition: all 0.2s;
     text-align: center;
     line-height: 1.4;
 }
 
 .action-btn:hover {
-    background: var(--grid-line);
+    background: rgba(79, 195, 247, 0.15);
     border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .action-btn:active {
@@ -205,7 +249,7 @@ html, body {
 .status-bar {
     text-align: center;
     padding-top: 6px;
-    border-top: 1px solid var(--grid-line);
+    border-top: 1px solid var(--panel-border);
 }
 
 #statusText {
@@ -228,8 +272,8 @@ html, body {
         left: 50%;
         transform: translateX(-50%);
         border-radius: 12px 12px 0 0;
-        border-left: 3px solid var(--pixel-border);
-        border-right: 3px solid var(--pixel-border);
+        border-left: 1px solid var(--panel-border);
+        border-right: 1px solid var(--panel-border);
     }
 }
 

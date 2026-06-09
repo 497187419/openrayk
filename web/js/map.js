@@ -1,6 +1,7 @@
 /**
  * 地图系统
- * 像素风虚拟空间 - 2.5D等轴测网格地图
+ * Antigravity 像素风虚拟空间 - 2.5D等轴测网格地图
+ * 深蓝星空背景 + 浅蓝线框网格
  */
 
 class GameMap {
@@ -8,7 +9,7 @@ class GameMap {
         this.width = width;
         this.height = height;
         this.tileSize = tileSize;
-        this.tileHeight = tileSize / 2; // 等轴测高度为宽度的一半
+        this.tileHeight = tileSize / 2;
         
         // 地图数据
         this.tiles = [];
@@ -23,8 +24,28 @@ class GameMap {
         this.zoom = 1;
         
         // 动画
-        this.waterOffset = 0;
         this.animTimer = 0;
+        this.starOffset = 0;
+        
+        // 星空星星
+        this.stars = this.generateStars(100);
+    }
+
+    /**
+     * 生成星空背景星星
+     */
+    generateStars(count) {
+        const stars = [];
+        for (let i = 0; i < count; i++) {
+            stars.push({
+                x: Math.random() * 2000,
+                y: Math.random() * 2000,
+                size: Math.random() * 2 + 0.5,
+                opacity: Math.random() * 0.8 + 0.2,
+                twinkleSpeed: Math.random() * 0.02 + 0.005
+            });
+        }
+        return stars;
     }
 
     /**
@@ -34,21 +55,15 @@ class GameMap {
         for (let y = 0; y < this.height; y++) {
             this.tiles[y] = [];
             for (let x = 0; x < this.width; x++) {
-                // 随机生成一些装饰性变化
                 const variation = Math.random();
                 let type = 'floor';
                 
-                // 边缘装饰
+                // 边缘
                 if (x === 0 || x === this.width - 1 || y === 0 || y === this.height - 1) {
                     type = 'border';
                 }
-                // 随机障碍物（约5%）
-                else if (variation > 0.95) {
-                    type = 'obstacle';
-                    this.obstacles.add(`${x},${y}`);
-                }
                 // 随机装饰
-                else if (variation > 0.9) {
+                else if (variation > 0.92) {
                     type = 'decoration';
                 }
                 
@@ -66,10 +81,7 @@ class GameMap {
      */
     update(dt) {
         this.animTimer += dt;
-        if (this.animTimer > 500) {
-            this.waterOffset = (this.waterOffset + 1) % 4;
-            this.animTimer = 0;
-        }
+        this.starOffset += dt * 0.01;
     }
 
     /**
@@ -90,7 +102,6 @@ class GameMap {
         const ts = this.tileSize * this.zoom;
         const th = this.tileHeight * this.zoom;
         
-        // 逆向等轴测公式
         const gridX = Math.floor((x / (ts / 2) + y / (th / 2)) / 2);
         const gridY = Math.floor((y / (th / 2) - x / (ts / 2)) / 2);
         
@@ -120,9 +131,45 @@ class GameMap {
     }
 
     /**
+     * 绘制星空背景
+     */
+    drawStars(ctx, screenWidth, screenHeight) {
+        ctx.save();
+        
+        // 深蓝渐变背景
+        const gradient = ctx.createLinearGradient(0, 0, 0, screenHeight);
+        gradient.addColorStop(0, '#0a0e27');
+        gradient.addColorStop(0.5, '#0f1535');
+        gradient.addColorStop(1, '#1a1f4b');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, screenWidth, screenHeight);
+        
+        // 绘制星星
+        this.stars.forEach(star => {
+            const twinkle = Math.sin(this.starOffset * star.twinkleSpeed * 100) * 0.3 + 0.7;
+            const alpha = star.opacity * twinkle;
+            
+            // 视差效果：星星随相机反向轻微移动
+            const parallaxX = (this.cameraX * 0.05 + star.x) % screenWidth;
+            const parallaxY = (this.cameraY * 0.05 + star.y) % screenHeight;
+            
+            const sx = parallaxX < 0 ? parallaxX + screenWidth : parallaxX;
+            const sy = parallaxY < 0 ? parallaxY + screenHeight : parallaxY;
+            
+            ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+            ctx.fillRect(sx, sy, star.size, star.size);
+        });
+        
+        ctx.restore();
+    }
+
+    /**
      * 绘制地图
      */
     draw(ctx, screenWidth, screenHeight) {
+        // 先绘制星空背景
+        this.drawStars(ctx, screenWidth, screenHeight);
+        
         // 计算可见区域
         const corners = [
             this.screenToGrid(0, 0),
@@ -136,7 +183,7 @@ class GameMap {
         const minY = Math.max(0, Math.min(...corners.map(c => c.y)) - 2);
         const maxY = Math.min(this.height - 1, Math.max(...corners.map(c => c.y)) + 2);
         
-        // 绘制格子（从远到近，确保遮挡关系正确）
+        // 绘制格子（从远到近）
         for (let y = minY; y <= maxY; y++) {
             for (let x = minX; x <= maxX; x++) {
                 if (x < 0 || x >= this.width || y < 0 || y >= this.height) continue;
@@ -158,10 +205,10 @@ class GameMap {
         
         // 格子顶点（菱形）
         const points = [
-            { x: x + w / 2, y: y },         // 上
-            { x: x + w, y: y + h / 2 },     // 右
-            { x: x + w / 2, y: y + h },     // 下
-            { x: x, y: y + h / 2 }          // 左
+            { x: x + w / 2, y: y },
+            { x: x + w, y: y + h / 2 },
+            { x: x + w / 2, y: y + h },
+            { x: x, y: y + h / 2 }
         ];
         
         // 根据类型绘制不同颜色
@@ -169,24 +216,20 @@ class GameMap {
         
         switch(tile.type) {
             case 'floor':
-                fillColor = (tile.x + tile.y) % 2 === 0 ? '#3a3a52' : '#353550';
-                strokeColor = '#4a4a6a';
+                fillColor = (tile.x + tile.y) % 2 === 0 ? 'rgba(15, 21, 53, 0.6)' : 'rgba(18, 25, 64, 0.6)';
+                strokeColor = '#2a3f5f';
                 break;
             case 'border':
-                fillColor = '#2d2d44';
-                strokeColor = '#5a5a7a';
-                break;
-            case 'obstacle':
-                fillColor = '#2c2c3e';
-                strokeColor = '#6c5ce7';
+                fillColor = 'rgba(10, 14, 39, 0.8)';
+                strokeColor = '#3a5f8f';
                 break;
             case 'decoration':
-                fillColor = '#3d3d55';
-                strokeColor = '#4a4a6a';
+                fillColor = 'rgba(15, 25, 55, 0.6)';
+                strokeColor = '#2a3f5f';
                 break;
             default:
-                fillColor = '#3a3a52';
-                strokeColor = '#4a4a6a';
+                fillColor = 'rgba(15, 21, 53, 0.6)';
+                strokeColor = '#2a3f5f';
         }
         
         // 绘制菱形格子
@@ -200,55 +243,12 @@ class GameMap {
         ctx.fillStyle = fillColor;
         ctx.fill();
         ctx.strokeStyle = strokeColor;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = Math.max(0.5, this.zoom);
         ctx.stroke();
-        
-        // 绘制障碍物装饰
-        if (tile.type === 'obstacle') {
-            this.drawObstacle(ctx, x, y, w, h, tile.variant);
-        }
         
         // 绘制装饰
         if (tile.type === 'decoration') {
             this.drawDecoration(ctx, x, y, w, h, tile.variant);
-        }
-    }
-
-    /**
-     * 绘制障碍物（像素树/石头，支持缩放）
-     */
-    drawObstacle(ctx, x, y, w, h, variant) {
-        const cx = x + w / 2;
-        const cy = y + h / 2 - 5 * this.zoom;
-        const s = this.zoom;
-        
-        if (variant % 2 === 0) {
-            // 像素树
-            // 树干
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(cx - 3*s, cy, 6*s, 12*s);
-            
-            // 树冠（像素风格）
-            ctx.fillStyle = '#2ecc71';
-            ctx.fillRect(cx - 10*s, cy - 12*s, 20*s, 12*s);
-            ctx.fillRect(cx - 7*s, cy - 18*s, 14*s, 6*s);
-            ctx.fillRect(cx - 4*s, cy - 22*s, 8*s, 4*s);
-            
-            // 树冠高光
-            ctx.fillStyle = '#27ae60';
-            ctx.fillRect(cx - 8*s, cy - 10*s, 4*s, 4*s);
-            ctx.fillRect(cx - 5*s, cy - 16*s, 3*s, 3*s);
-        } else {
-            // 像素石头
-            ctx.fillStyle = '#7f8c8d';
-            ctx.fillRect(cx - 8*s, cy + 2*s, 16*s, 10*s);
-            ctx.fillRect(cx - 6*s, cy - 2*s, 12*s, 6*s);
-            ctx.fillRect(cx - 3*s, cy - 5*s, 6*s, 3*s);
-            
-            // 高光
-            ctx.fillStyle = '#95a5a6';
-            ctx.fillRect(cx - 6*s, cy + 4*s, 4*s, 3*s);
-            ctx.fillRect(cx - 4*s, cy, 3*s, 2*s);
         }
     }
 
@@ -261,24 +261,24 @@ class GameMap {
         const s = Math.max(1, this.zoom);
         
         if (variant === 0) {
-            // 小花
-            ctx.fillStyle = '#e74c3c';
+            // 发光小花
+            ctx.fillStyle = '#4fc3f7';
             ctx.fillRect(cx - 1*s, cy - 3*s, 2*s, 2*s);
             ctx.fillRect(cx - 3*s, cy - 1*s, 2*s, 2*s);
             ctx.fillRect(cx + 1*s, cy - 1*s, 2*s, 2*s);
             ctx.fillRect(cx - 1*s, cy + 1*s, 2*s, 2*s);
-            ctx.fillStyle = '#f1c40f';
+            ctx.fillStyle = '#81d4fa';
             ctx.fillRect(cx - 1*s, cy - 1*s, 2*s, 2*s);
         } else if (variant === 1) {
-            // 小草
-            ctx.fillStyle = '#27ae60';
+            // 发光小草
+            ctx.fillStyle = '#69f0ae';
             ctx.fillRect(cx - 2*s, cy, 1*s, 4*s);
             ctx.fillRect(cx, cy - 1*s, 1*s, 5*s);
             ctx.fillRect(cx + 2*s, cy, 1*s, 4*s);
         } else {
-            // 小石头
-            ctx.fillStyle = '#95a5a6';
-            ctx.fillRect(cx - 2*s, cy + 2*s, 4*s, 3*s);
+            // 小光点
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(cx - 1*s, cy + 1*s, 2*s, 2*s);
         }
     }
 

@@ -189,7 +189,7 @@ class Game {
         const ai = new Character(id, name, pos.x, pos.y, {
             ...config,
             isAI: true,
-            moveSpeed: Utils.randomInt(300, 500)
+            moveSpeed: Utils.randomInt(600, 1000)
         });
         this.characters.set(id, ai);
         return ai;
@@ -209,10 +209,14 @@ class Game {
 
     /**
      * 更新寻路器的占用格子
+     * @param {Character} excludeChar - 需要排除的角色（正在寻路的角色自己）
      */
-    updatePathfinderOccupied() {
+    updatePathfinderOccupied(excludeChar = null) {
         const positions = [];
         this.characters.forEach(char => {
+            // 排除自己
+            if (excludeChar && char.id === excludeChar.id) return;
+            // 只占用静止的角色位置（移动中的角色不视为占用）
             if (!char.isMoving) {
                 positions.push({ x: char.gridX, y: char.gridY });
             }
@@ -449,8 +453,10 @@ class Game {
         // 更新地图
         this.map.update(dt);
         
-        // 更新角色
-        this.characters.forEach(char => char.update(dt));
+        // 更新角色（传入game引用供AI使用）
+        this.characters.forEach(char => {
+            char.update(dt, this);
+        });
         
         // 更新相机跟随
         if (this.cameraTarget) {
@@ -484,17 +490,17 @@ class Game {
         
         // 收集所有角色并按Y坐标排序（确保遮挡关系正确）
         const sortedChars = Array.from(this.characters.values()).sort((a, b) => {
-            // 等轴测排序：先按x+y排序
-            const aSum = a.gridX + a.gridY;
-            const bSum = b.gridX + b.gridY;
+            // 等轴测排序：使用渲染位置进行排序
+            const aSum = a.renderX + a.renderY;
+            const bSum = b.renderX + b.renderY;
             if (aSum !== bSum) return aSum - bSum;
-            return a.gridY - b.gridY;
+            return a.renderY - b.renderY;
         });
         
-        // 绘制角色（传入缩放值）
+        // 绘制角色（传入缩放值，使用渲染位置）
         sortedChars.forEach(char => {
-            const pos = this.map.gridToScreen(char.gridX, char.gridY);
-            char.draw(ctx, pos.x, pos.y, this.tileSize, this.tileSize / 2, this.map.zoom);
+            const pos = this.map.gridToScreen(char.renderX, char.renderY);
+            char.draw(ctx, pos.x, pos.y, this.tileSize * this.map.zoom, this.tileSize / 2 * this.map.zoom, this.map.zoom);
         });
     }
 
