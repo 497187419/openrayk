@@ -2,55 +2,389 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>像素分身虚拟空间</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- 基础SEO Meta标签 -->
+    <title>湛江市欧朋雷克网络科技有限公司 - 专业的软件开发与技术服务商 | OpenRayk</title>
+    <meta name="description" content="湛江市欧朋雷克网络科技有限公司提供专业的软件开发、技术服务、系统集成、人工智能应用等全方位技术解决方案。10+年行业经验，100+成功案例，值得信赖的技术合作伙伴。">
+    <meta name="keywords" content="欧朋雷克,OpenRayk,软件开发,技术服务,系统集成,人工智能,网络技术,湛江软件公司,广东软件开发,定制化开发,数字化转型">
+    <meta name="author" content="湛江市欧朋雷克网络科技有限公司">
+    <meta name="copyright" content="© 2026 湛江市欧朋雷克网络科技有限公司">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <link rel="canonical" href="https://openrayk.com/">
+    
+    <!-- Open Graph 社交媒体标签 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="湛江市欧朋雷克网络科技有限公司 - 专业的软件开发与技术服务商">
+    <meta property="og:description" content="提供专业的软件开发、技术服务、系统集成、人工智能应用等全方位技术解决方案。10+年行业经验，100+成功案例。">
+    <meta property="og:url" content="https://openrayk.com/">
+    <meta property="og:site_name" content="OpenRayk 欧朋雷克科技">
+    <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="https://openrayk.com/images/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter Card 标签 -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="湛江市欧朋雷克网络科技有限公司 - 专业的软件开发与技术服务商">
+    <meta name="twitter:description" content="提供专业的软件开发、技术服务、系统集成、人工智能应用等全方位技术解决方案。">
+    <meta name="twitter:image" content="https://openrayk.com/images/og-image.png">
+    
+    <!-- 结构化数据 Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "湛江市欧朋雷克网络科技有限公司",
+        "alternateName": "OpenRayk",
+        "url": "https://openrayk.com",
+        "logo": "https://openrayk.com/images/logo.png",
+        "description": "专业的技术服务提供商，致力于为客户提供优质的软件开发、系统集成、人工智能应用等全方位技术解决方案",
+        "address": {
+            "@type": "PostalAddress",
+            "addressRegion": "广东省",
+            "addressLocality": "湛江市",
+            "addressCountry": "CN"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "postmaster@openrayk.com",
+            "contactType": "customer service"
+        },
+        "sameAs": []
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "OpenRayk 欧朋雷克科技",
+        "alternateName": "湛江市欧朋雷克网络科技有限公司",
+        "url": "https://openrayk.com",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://openrayk.com/search?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "首页",
+                "item": "https://openrayk.com/"
+            }
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
 </head>
 <body>
-    <!-- 游戏主画布 -->
-    <div id="game-container">
-        <canvas id="gameCanvas"></canvas>
-    </div>
+    <header class="header" id="header" role="banner">
+        <nav class="nav container" aria-label="主导航">
+            <div class="nav__logo">
+                <h1><a href="/" aria-label="OpenRayk 欧朋雷克科技 - 返回首页">OpenRayk</a></h1>
+                <span class="nav__subtitle">欧朋雷克科技</span>
+            </div>
+            <div class="nav__menu" id="nav-menu" aria-label="移动端菜单">
+                <ul class="nav__list" role="menubar">
+                    <li class="nav__item" role="none"><a href="#home" class="nav__link active" role="menuitem">首页</a></li>
+                    <li class="nav__item" role="none"><a href="#about" class="nav__link" role="menuitem">关于我们</a></li>
+                    <li class="nav__item" role="none"><a href="#services" class="nav__link" role="menuitem">服务项目</a></li>
+                    <li class="nav__item" role="none"><a href="#contact" class="nav__link" role="menuitem">联系我们</a></li>
+                </ul>
+                <button class="nav__close" id="nav-close" aria-label="关闭菜单">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <button class="nav__toggle" id="nav-toggle" aria-label="打开菜单" aria-expanded="false">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </div>
+        </nav>
+    </header>
 
-    <!-- 手机控制端 -->
-    <div id="mobile-control">
-        <div class="control-header">
-            <div class="player-avatar">
-                <canvas id="playerAvatar" width="32" height="32"></canvas>
+    <main class="main" role="main">
+        <section class="hero section" id="home" aria-labelledby="hero-title">
+            <div class="hero__container container">
+                <article class="hero__content">
+                    <h2 id="hero-title" class="hero__title">
+                        <span class="hero__title-small">湛江市欧朋雷克网络科技有限公司</span>
+                        <span class="hero__title-main">Zhanjiang OpenRayk</span>
+                        <span class="hero__title-sub">Network Technology Co., Ltd.</span>
+                    </h2>
+                    <p class="hero__description">
+                        专业的技术服务提供商，致力于为客户提供优质的软件开发、系统集成、人工智能应用等全方位技术解决方案
+                    </p>
+                    <div class="hero__buttons">
+                        <a href="#services" class="button button--primary">了解服务</a>
+                        <a href="#contact" class="button button--outline">联系我们</a>
+                    </div>
+                </article>
             </div>
-            <div class="player-info">
-                <span class="player-name">我的分身</span>
-                <span class="player-status">待机中</span>
-            </div>
-        </div>
-        
-        <div class="control-body">
-            <div class="input-area">
-                <input type="text" id="commandInput" placeholder="输入指令，例如：去和蓝衣服的人打招呼" />
-                <button id="sendBtn">发送</button>
-            </div>
-            
-            <div class="quick-actions">
-                <button class="action-btn" data-action="greet">打招呼</button>
-                <button class="action-btn" data-action="random">随机走走</button>
-                <button class="action-btn" data-action="chat">找最近的人</button>
-                <button class="action-btn" data-action="stop">停止</button>
-            </div>
-        </div>
-        
-        <div class="status-bar">
-            <span id="statusText">就绪</span>
-        </div>
-    </div>
+        </section>
 
-    <!-- 像素字体 -->
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
-    <script src="js/utils.js"></script>
-    <script src="js/pathfinding.js"></script>
-    <script src="js/character.js"></script>
-    <script src="js/map.js"></script>
-    <script src="js/game.js"></script>
-    <script src="js/main.js"></script>
+        <section class="about section" id="about" aria-labelledby="about-title">
+            <div class="container">
+                <h2 id="about-title" class="section__title">关于我们</h2>
+                <p class="section__subtitle">About OpenRayk</p>
+                
+                <div class="about__content" itemscope itemtype="https://schema.org/AboutPage">
+                    <div class="about__info">
+                        <p class="about__description" itemprop="description">
+                            湛江市欧朋雷克网络科技有限公司是一家专注于技术服务与软件开发的高新技术企业。
+                            我们拥有一支经验丰富的技术团队，致力于为客户提供最优质的技术解决方案。
+                        </p>
+                        <div class="about__stats" aria-label="公司数据统计">
+                            <div class="stat__item">
+                                <span class="stat__number">50+</span>
+                                <span class="stat__text">服务客户</span>
+                            </div>
+                            <div class="stat__item">
+                                <span class="stat__number">100+</span>
+                                <span class="stat__text">完成项目</span>
+                            </div>
+                            <div class="stat__item">
+                                <span class="stat__number">10+</span>
+                                <span class="stat__text">技术专家</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="about__features" aria-label="核心优势">
+                        <article class="feature__card">
+                            <div class="feature__icon" role="img" aria-label="专业专注图标">🎯</div>
+                            <h3 class="feature__title">专业专注</h3>
+                            <p class="feature__description">深耕技术领域，提供专业的技术服务</p>
+                        </article>
+                        <article class="feature__card">
+                            <div class="feature__icon" role="img" aria-label="创新驱动图标">💡</div>
+                            <h3 class="feature__title">创新驱动</h3>
+                            <p class="feature__description">持续创新，引领技术发展方向</p>
+                        </article>
+                        <article class="feature__card">
+                            <div class="feature__icon" role="img" aria-label="客户至上图标">🤝</div>
+                            <h3 class="feature__title">客户至上</h3>
+                            <p class="feature__description">以客户需求为中心，提供定制化服务</p>
+                        </article>
+                        <article class="feature__card">
+                            <div class="feature__icon" role="img" aria-label="高效交付图标">⚡</div>
+                            <h3 class="feature__title">高效交付</h3>
+                            <p class="feature__description">快速响应，高效完成项目交付</p>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="services section" id="services" aria-labelledby="services-title">
+            <div class="container">
+                <h2 id="services-title" class="section__title">服务项目</h2>
+                <p class="section__subtitle">Our Services</p>
+                
+                <div class="services__grid" itemscope itemtype="https://schema.org/ItemList">
+                    <meta itemprop="name" content="服务项目列表">
+                    <link itemprop="itemListOrder" href="https://schema.org/ItemListOrderAscending">
+                    
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="1">
+                        <div class="service__icon" role="img" aria-label="软件开发图标">💻</div>
+                        <h3 class="service__title" itemprop="name">软件开发</h3>
+                        <p class="service__description" itemprop="description">提供定制化软件开发服务，包括Web应用、移动应用、桌面应用等</p>
+                        <ul class="service__list">
+                            <li>软件销售</li>
+                            <li>软件外包服务</li>
+                            <li>人工智能应用软件开发</li>
+                        </ul>
+                    </article>
+
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="2">
+                        <div class="service__icon" role="img" aria-label="技术服务图标">🔧</div>
+                        <h3 class="service__title" itemprop="name">技术服务</h3>
+                        <p class="service__description" itemprop="description">全面的技术支持与咨询服务，助力企业数字化转型</p>
+                        <ul class="service__list">
+                            <li>技术开发与咨询</li>
+                            <li>技术交流与推广</li>
+                            <li>技术转让</li>
+                        </ul>
+                    </article>
+
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="3">
+                        <div class="service__icon" role="img" aria-label="网络技术图标">🌐</div>
+                        <h3 class="service__title" itemprop="name">网络技术</h3>
+                        <p class="service__description" itemprop="description">提供专业的网络技术服务和系统集成解决方案</p>
+                        <ul class="service__list">
+                            <li>计算机系统服务</li>
+                            <li>信息系统集成服务</li>
+                            <li>网络与信息安全</li>
+                        </ul>
+                    </article>
+
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="4">
+                        <div class="service__icon" role="img" aria-label="数据服务图标">📊</div>
+                        <h3 class="service__title" itemprop="name">数据服务</h3>
+                        <p class="service__description" itemprop="description">专业的数据处理与存储支持服务</p>
+                        <ul class="service__list">
+                            <li>数据处理与存储</li>
+                            <li>互联网数据服务</li>
+                            <li>数字技术服务</li>
+                        </ul>
+                    </article>
+
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="5">
+                        <div class="service__icon" role="img" aria-label="设计与营销图标">🎨</div>
+                        <h3 class="service__title" itemprop="name">设计与营销</h3>
+                        <p class="service__description" itemprop="description">专业的品牌设计与营销策划服务</p>
+                        <ul class="service__list">
+                            <li>广告设计与代理</li>
+                            <li>市场营销策划</li>
+                            <li>企业形象策划</li>
+                        </ul>
+                    </article>
+
+                    <article class="service__card" itemscope itemtype="https://schema.org/Service" itemprop="itemListElement">
+                        <meta itemprop="position" content="6">
+                        <div class="service__icon" role="img" aria-label="智能解决方案图标">🤖</div>
+                        <h3 class="service__title" itemprop="name">智能解决方案</h3>
+                        <p class="service__description" itemprop="description">智能化产品与解决方案，提升生活品质</p>
+                        <ul class="service__list">
+                            <li>智能家庭消费设备</li>
+                            <li>智能机器人销售</li>
+                            <li>园区管理服务</li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact section" id="contact" aria-labelledby="contact-title">
+            <div class="container">
+                <h2 id="contact-title" class="section__title">联系我们</h2>
+                <p class="section__subtitle">Contact Us</p>
+                
+                <div class="contact__content">
+                    <div class="contact__info">
+                        <h3 class="contact__title">联系方式</h3>
+                        <address class="contact__item">
+                            <svg class="contact__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                                <circle cx="12" cy="10" r="3"></circle>
+                            </svg>
+                            <div>
+                                <h4>公司地址</h4>
+                                <p>广东省湛江市</p>
+                            </div>
+                        </address>
+                        <!-- <div class="contact__item">
+                            <svg class="contact__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <div>
+                                <h4>联系电话</h4>
+                                <p>+86 XXX-XXXX-XXXX</p>
+                            </div>
+                        </div> -->
+                        <div class="contact__item">
+                            <svg class="contact__icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <div>
+                                <h4>电子邮箱</h4>
+                                <p><a href="mailto:postmaster@openrayk.com" itemprop="email">postmaster@openrayk.com</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="contact__form-wrapper">
+                        <form class="contact__form" id="contact-form" action="#" method="POST" novalidate aria-label="联系表单">
+                            <div class="form__group">
+                                <label for="name" class="form__label">姓名 <span aria-label="必填">*</span></label>
+                                <input type="text" id="name" name="name" class="form__input" placeholder="请输入您的姓名" required autocomplete="name" aria-required="true">
+                            </div>
+                            <div class="form__group">
+                                <label for="email" class="form__label">邮箱 <span aria-label="必填">*</span></label>
+                                <input type="email" id="email" name="email" class="form__input" placeholder="请输入您的邮箱" required autocomplete="email" aria-required="true">
+                            </div>
+                            <div class="form__group">
+                                <label for="phone" class="form__label">电话</label>
+                                <input type="tel" id="phone" name="phone" class="form__input" placeholder="请输入您的电话" autocomplete="tel">
+                            </div>
+                            <div class="form__group">
+                                <label for="message" class="form__label">留言 <span aria-label="必填">*</span></label>
+                                <textarea id="message" name="message" class="form__textarea" placeholder="请输入您的留言" rows="4" required aria-required="true"></textarea>
+                            </div>
+                            <button type="submit" class="button button--primary button--full">发送消息</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__info">
+                    <h3 class="footer__logo">OpenRayk</h3>
+                    <p class="footer__description">
+                        湛江市欧朋雷克网络科技有限公司<br>
+                        专业的技术服务与软件开发公司
+                    </p>
+                </div>
+                <nav class="footer__links" aria-label="快速链接">
+                    <h4>快速链接</h4>
+                    <ul>
+                        <li><a href="#home">首页</a></li>
+                        <li><a href="#about">关于我们</a></li>
+                        <li><a href="#services">服务项目</a></li>
+                        <li><a href="#contact">联系我们</a></li>
+                    </ul>
+                </nav>
+                <div class="footer__services" aria-label="主营业务">
+                    <h4>主营业务</h4>
+                    <ul>
+                        <li>软件开发</li>
+                        <li>技术服务</li>
+                        <li>系统集成</li>
+                        <li>网络技术</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer__bottom">
+                <p>&copy; 2024 湛江市欧朋雷克网络科技有限公司 版权所有</p>
+                <p>Zhanjiang OpenRayk Network Technology Co., Ltd.</p>
+                <p class="footer__icp"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">粤ICP备2026040136号</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <a href="#home" class="scrolltop" id="scrolltop" aria-label="返回顶部" title="返回顶部">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </a>
+
+    <script src="script.js"></script>
 </body>
 </html>
