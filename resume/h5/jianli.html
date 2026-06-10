@@ -4,7 +4,496 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>我的在线简历</title>
-	<link rel="stylesheet" href="style.css">
+	<style>
+/* 基础重置 */
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+	font-size: 16px;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+	background: #f5f7fa;
+	color: #333;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+}
+
+.page-wrap {
+	max-width: 750px;
+	margin: 0 auto;
+	padding: 0 16px 40px;
+}
+
+/* 头部 */
+.header {
+	text-align: center;
+	padding: 40px 0 24px;
+}
+
+.avatar {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: #fff;
+	font-size: 32px;
+	font-weight: bold;
+	line-height: 80px;
+	margin: 0 auto 16px;
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+img.avatar {
+	object-fit: cover;
+	display: block;
+	border: 2px solid #fff;
+}
+
+.name {
+	font-size: 28px;
+	font-weight: 700;
+	color: #1a1a2e;
+	margin-bottom: 6px;
+}
+
+.title {
+	font-size: 15px;
+	color: #666;
+	margin-bottom: 14px;
+}
+
+.contact-bar {
+	display: flex;
+	justify-content: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+
+.tag {
+	background: #eef2ff;
+	color: #4c6ef5;
+	font-size: 12px;
+	padding: 4px 12px;
+	border-radius: 20px;
+}
+
+/* 区块标题 */
+.section {
+	margin-top: 28px;
+}
+
+.section-title {
+	font-size: 18px;
+	font-weight: 700;
+	color: #1a1a2e;
+	margin-bottom: 14px;
+	padding-left: 12px;
+	border-left: 4px solid #667eea;
+}
+
+/* 简介 */
+.intro-text {
+	font-size: 14px;
+	color: #555;
+	line-height: 1.8;
+	background: #fff;
+	padding: 16px;
+	border-radius: 12px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+/* 技能云 */
+.skill-cloud {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.skill-item {
+	background: #fff;
+	color: #555;
+	font-size: 13px;
+	padding: 6px 14px;
+	border-radius: 20px;
+	border: 1px solid #e8e8e8;
+}
+
+.skill-item.primary {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: #fff;
+	border: none;
+	font-weight: 500;
+}
+
+/* 时间线 */
+.timeline {
+	position: relative;
+	padding-left: 20px;
+}
+
+.timeline::before {
+	content: "";
+	position: absolute;
+	left: 5px;
+	top: 6px;
+	bottom: 6px;
+	width: 2px;
+	background: #e0e0e0;
+}
+
+.timeline-item {
+	position: relative;
+	padding-bottom: 20px;
+}
+
+.timeline-dot {
+	position: absolute;
+	left: -20px;
+	top: 6px;
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	background: #667eea;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 2px #667eea;
+}
+
+.timeline-content h3 {
+	font-size: 15px;
+	font-weight: 600;
+	color: #1a1a2e;
+	margin-bottom: 4px;
+}
+
+.timeline-meta {
+	font-size: 13px;
+	color: #888;
+	margin-bottom: 2px;
+}
+
+.timeline-date {
+	font-size: 12px;
+	color: #667eea;
+	margin-bottom: 8px;
+}
+
+.timeline-list {
+	list-style: none;
+	padding: 0;
+}
+
+.timeline-list li {
+	font-size: 13px;
+	color: #555;
+	padding-left: 14px;
+	position: relative;
+	margin-bottom: 4px;
+}
+
+.timeline-list li::before {
+	content: "•";
+	position: absolute;
+	left: 0;
+	color: #667eea;
+}
+
+/* 项目卡片 */
+.project-card {
+	background: #fff;
+	border-radius: 12px;
+	padding: 16px;
+	margin-bottom: 12px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.project-card:active {
+	transform: scale(0.98);
+}
+
+.project-header {
+	margin-bottom: 10px;
+}
+
+.project-header h3 {
+	font-size: 15px;
+	font-weight: 600;
+	color: #1a1a2e;
+	margin-bottom: 6px;
+}
+
+.project-role {
+	display: inline-block;
+	font-size: 12px;
+	color: #667eea;
+	background: #eef2ff;
+	padding: 2px 8px;
+	border-radius: 4px;
+	margin-right: 6px;
+}
+
+.project-date {
+	font-size: 12px;
+	color: #999;
+}
+
+.project-desc {
+	font-size: 13px;
+	color: #666;
+	line-height: 1.7;
+	margin-bottom: 12px;
+}
+
+/* 项目媒体区域 */
+.project-media {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px;
+	margin-top: 10px;
+}
+
+.media-placeholder {
+	aspect-ratio: 16 / 10;
+	background: linear-gradient(135deg, #f0f2f5 0%, #e6e9ef 100%);
+	border-radius: 10px;
+	border: 2px dashed #c5c9d0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	position: relative;
+	overflow: hidden;
+}
+
+.media-placeholder:hover {
+	border-color: #667eea;
+	background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+}
+
+.media-placeholder span {
+	font-size: 28px;
+	margin-bottom: 4px;
+	opacity: 0.6;
+}
+
+.media-placeholder p {
+	font-size: 11px;
+	color: #889;
+	text-align: center;
+	padding: 0 8px;
+}
+
+/* 视频播放图标按钮 */
+.media-placeholder.video-playable::after {
+	content: "";
+	position: absolute;
+	width: 44px;
+	height: 44px;
+	background: rgba(255,255,255,0.9);
+	border-radius: 50%;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+	pointer-events: none;
+}
+
+.media-placeholder.video-playable::before {
+	content: "";
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-left: 14px solid #667eea;
+	border-top: 9px solid transparent;
+	border-bottom: 9px solid transparent;
+	margin-left: 4px;
+	z-index: 2;
+	pointer-events: none;
+}
+
+.media-placeholder.has-media {
+	border-style: solid;
+	border-color: transparent;
+	padding: 0;
+}
+
+.media-placeholder.has-media img,
+.media-placeholder.has-media video {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	border-radius: 8px;
+}
+
+/* 视频缩略图上的播放按钮 */
+.media-placeholder.video-playable.has-media img {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+
+.media-placeholder.video-playable.has-media::after {
+	z-index: 2;
+}
+
+.media-placeholder.video-playable.has-media::before {
+	z-index: 3;
+}
+
+/* 媒体弹窗 */
+.media-modal {
+	display: none;
+	position: fixed;
+	z-index: 1000;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.85);
+	align-items: center;
+	justify-content: center;
+	padding: 20px;
+}
+
+.media-modal.active {
+	display: flex;
+}
+
+.media-modal-content {
+	position: relative;
+	max-width: 90%;
+	max-height: 90%;
+	background: #1a1a2e;
+	border-radius: 12px;
+	overflow: hidden;
+	text-align: center;
+}
+
+.media-modal-close {
+	position: absolute;
+	top: 10px;
+	right: 14px;
+	font-size: 28px;
+	color: #fff;
+	cursor: pointer;
+	z-index: 10;
+	text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+
+.media-modal-img,
+.media-modal-video {
+	display: none;
+	max-width: 100%;
+	max-height: 70vh;
+	border-radius: 8px;
+}
+
+.media-modal-img.active,
+.media-modal-video.active {
+	display: block;
+}
+
+.media-modal-video {
+	width: 100%;
+}
+
+/* 弹窗左右切换按钮 */
+.modal-prev,
+.modal-next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background: rgba(255,255,255,0.15);
+	border: none;
+	color: #fff;
+	font-size: 24px;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(4px);
+	transition: background 0.2s;
+}
+
+.modal-prev:hover,
+.modal-next:hover {
+	background: rgba(255,255,255,0.3);
+}
+
+.modal-prev {
+	left: 10px;
+}
+
+.modal-next {
+	right: 10px;
+}
+
+.modal-counter {
+	font-size: 13px;
+	color: #aaa;
+	padding: 10px 0 4px;
+	text-align: center;
+}
+
+/* 页脚 */
+.footer {
+	text-align: center;
+	margin-top: 40px;
+	padding-top: 20px;
+	border-top: 1px solid #eee;
+}
+
+.footer p {
+	font-size: 12px;
+	color: #aaa;
+	margin-bottom: 16px;
+}
+
+.btn-primary {
+	display: inline-block;
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: #fff;
+	font-size: 14px;
+	padding: 12px 32px;
+	border-radius: 24px;
+	text-decoration: none;
+	font-weight: 500;
+	box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+/* 动画 */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.section {
+	animation: fadeInUp 0.5s ease both;
+}
+
+.section:nth-child(1) { animation-delay: 0.05s; }
+.section:nth-child(2) { animation-delay: 0.1s; }
+.section:nth-child(3) { animation-delay: 0.15s; }
+.section:nth-child(4) { animation-delay: 0.2s; }
+.section:nth-child(5) { animation-delay: 0.25s; }
+.section:nth-child(6) { animation-delay: 0.3s; }
+	</style>
 </head>
 <body>
 	<div class="page-wrap">
@@ -599,6 +1088,201 @@
 		</div>
 	</div>
 
-	<script src="main.js"></script>
+	<script>
+		/**
+ * 简历H5交互脚本
+ * @author ld
+ * @copyright 2026
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+	const modal = document.getElementById('mediaModal');
+	const modalImg = document.getElementById('modalImg');
+	const modalVideo = document.getElementById('modalVideo');
+	const modalClose = document.querySelector('.media-modal-close');
+	const modalPrev = document.getElementById('modalPrev');
+	const modalNext = document.getElementById('modalNext');
+	const modalCounter = document.getElementById('modalCounter');
+
+	// 当前媒体列表和索引
+	let currentMediaList = [];
+	let currentIndex = 0;
+
+	/**
+	 * 打开弹窗显示媒体
+	 * @param string type 媒体类型 img/video
+	 * @param string src 媒体路径
+	 * @param Array mediaList 同项目媒体列表
+	 * @param number index 当前索引
+	 */
+	function openModal(type, src, mediaList, index) {
+		currentMediaList = mediaList || [{type: type, src: src}];
+		currentIndex = index || 0;
+
+		renderMedia();
+
+		modal.classList.add('active');
+		document.body.style.overflow = 'hidden';
+	}
+
+	/**
+	 * 渲染当前索引的媒体
+	 */
+	function renderMedia() {
+		const item = currentMediaList[currentIndex];
+		if (!item) return;
+
+		modalImg.classList.remove('active');
+		modalVideo.classList.remove('active');
+		modalVideo.pause();
+
+		if (item.type === 'img') {
+			modalImg.src = item.src;
+			modalImg.classList.add('active');
+		} else if (item.type === 'video') {
+			modalVideo.src = item.src;
+			modalVideo.classList.add('active');
+			modalVideo.load();
+			modalVideo.play().catch(function() {});
+		}
+
+		// 更新计数器
+		modalCounter.textContent = (currentIndex + 1) + ' / ' + currentMediaList.length;
+
+		// 控制按钮显示
+		modalPrev.style.display = currentMediaList.length > 1 ? 'flex' : 'none';
+		modalNext.style.display = currentMediaList.length > 1 ? 'flex' : 'none';
+	}
+
+	/**
+	 * 切换到下一张
+	 */
+	function nextMedia() {
+		if (currentMediaList.length <= 1) return;
+		currentIndex = (currentIndex + 1) % currentMediaList.length;
+		renderMedia();
+	}
+
+	/**
+	 * 切换到上一张
+	 */
+	function prevMedia() {
+		if (currentMediaList.length <= 1) return;
+		currentIndex = (currentIndex - 1 + currentMediaList.length) % currentMediaList.length;
+		renderMedia();
+	}
+
+	/**
+	 * 关闭弹窗
+	 */
+	function closeModal() {
+		modal.classList.remove('active');
+		modalImg.src = '';
+		modalVideo.src = '';
+		modalVideo.pause();
+		currentMediaList = [];
+		currentIndex = 0;
+		document.body.style.overflow = '';
+	}
+
+	// 占位图点击事件
+	const placeholders = document.querySelectorAll('.media-placeholder');
+	placeholders.forEach(function(ph) {
+		ph.addEventListener('click', function() {
+			const type = ph.getAttribute('data-type');
+			const src = ph.getAttribute('data-src');
+
+			if (src && src.trim() !== '') {
+				// 获取同项目卡片内的所有媒体
+				const card = ph.closest('.project-card');
+				const cardPlaceholders = card ? card.querySelectorAll('.media-placeholder[data-src]:not([data-src=""])') : [ph];
+				const mediaList = [];
+				let index = 0;
+
+				cardPlaceholders.forEach(function(item, i) {
+					mediaList.push({
+						type: item.getAttribute('data-type'),
+						src: item.getAttribute('data-src')
+					});
+					if (item === ph) {
+						index = i;
+					}
+				});
+
+				openModal(type, src, mediaList, index);
+			} else {
+				// 无媒体时提示
+				modalImg.classList.remove('active');
+				modalVideo.classList.remove('active');
+				modalPrev.style.display = 'none';
+				modalNext.style.display = 'none';
+				modalCounter.textContent = '';
+				modal.classList.add('active');
+				document.body.style.overflow = 'hidden';
+			}
+		});
+	});
+
+	// 关闭弹窗
+	modalClose.addEventListener('click', closeModal);
+	modal.addEventListener('click', function(e) {
+		if (e.target === modal) {
+			closeModal();
+		}
+	});
+
+	// 左右切换按钮
+	modalPrev.addEventListener('click', function(e) {
+		e.stopPropagation();
+		prevMedia();
+	});
+	modalNext.addEventListener('click', function(e) {
+		e.stopPropagation();
+		nextMedia();
+	});
+
+	// 键盘左右箭头切换
+	document.addEventListener('keydown', function(e) {
+		if (!modal.classList.contains('active')) return;
+		if (e.key === 'ArrowLeft') {
+			prevMedia();
+		} else if (e.key === 'ArrowRight') {
+			nextMedia();
+		} else if (e.key === 'Escape') {
+			closeModal();
+		}
+	});
+
+	// 项目卡片滚动淡入
+	const observer = new IntersectionObserver(function(entries) {
+		entries.forEach(function(entry) {
+			if (entry.isIntersecting) {
+				entry.target.style.opacity = '1';
+				entry.target.style.transform = 'translateY(0)';
+			}
+		});
+	}, { threshold: 0.1 });
+
+	const projectCards = document.querySelectorAll('.project-card');
+	projectCards.forEach(function(card) {
+		card.style.opacity = '0';
+		card.style.transform = 'translateY(16px)';
+		card.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+		observer.observe(card);
+	});
+
+	// 技能标签点击效果
+	const skillItems = document.querySelectorAll('.skill-item');
+	skillItems.forEach(function(item) {
+		item.addEventListener('click', function() {
+			item.style.transform = 'scale(0.92)';
+			setTimeout(function() {
+				item.style.transform = 'scale(1)';
+			}, 150);
+		});
+	});
+});
+
+	</script>
 </body>
 </html>
