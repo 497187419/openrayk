@@ -396,18 +396,46 @@ img.avatar {
 	width: 100%;
 }
 
-.media-modal-tip {
-	font-size: 12px;
-	color: #aaa;
-	padding: 12px 16px;
-	background: #1a1a2e;
+/* 弹窗左右切换按钮 */
+.modal-prev,
+.modal-next {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	background: rgba(255,255,255,0.15);
+	border: none;
+	color: #fff;
+	font-size: 24px;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	cursor: pointer;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	backdrop-filter: blur(4px);
+	transition: background 0.2s;
 }
 
-.media-modal-tip code {
-	background: #333;
-	padding: 2px 6px;
-	border-radius: 4px;
-	color: #7ee787;
+.modal-prev:hover,
+.modal-next:hover {
+	background: rgba(255,255,255,0.3);
+}
+
+.modal-prev {
+	left: 10px;
+}
+
+.modal-next {
+	right: 10px;
+}
+
+.modal-counter {
+	font-size: 13px;
+	color: #aaa;
+	padding: 10px 0 4px;
+	text-align: center;
 }
 
 /* 页脚 */
