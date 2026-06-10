@@ -52,6 +52,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
 			if (src && src.trim() !== '') {
 				openModal(type, src);
+				// 视频类型在弹窗打开后延迟加载播放，确保DOM已渲染
+				if (type === 'video') {
+					modalVideo.load();
+					modalVideo.play().catch(function() {});
+				}
 			} else {
 				// 无媒体时提示用户如何添加
 				modalImg.classList.remove('active');
