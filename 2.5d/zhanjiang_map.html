@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>湛江赤坎区虚拟空间 - 像素风网格地图</title>
+	<link rel="stylesheet" href="css/style.css">
+	<style>
+		#zone-info {
+			position: fixed;
+			top: 10px;
+			left: 10px;
+			z-index: 100;
+			background: rgba(10, 14, 39, 0.85);
+			border: 1px solid rgba(79, 195, 247, 0.3);
+			border-radius: 6px;
+			padding: 8px 12px;
+			color: #4fc3f7;
+			font-size: 10px;
+			pointer-events: none;
+		}
+		#zone-info .label {
+			color: #8b9bb4;
+			font-size: 9px;
+		}
+		#controls-hint {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 90;
+			background: rgba(10, 14, 39, 0.9);
+			border: 1px solid rgba(79, 195, 247, 0.3);
+			border-radius: 8px;
+			padding: 16px 20px;
+			color: #e0e6ed;
+			font-size: 10px;
+			text-align: center;
+			line-height: 1.8;
+			opacity: 0;
+			transition: opacity 0.5s;
+			pointer-events: none;
+		}
+		#controls-hint.show {
+			opacity: 1;
+		}
+	</style>
+</head>
+<body>
+	<div id="game-container">
+		<canvas id="gameCanvas"></canvas>
+	</div>
+
+	<div id="zone-info">
+		<div class="label">当前区域</div>
+		<div id="zoneName">赤坎中心</div>
+	</div>
+
+	<div id="controls-hint" class="show">
+		<div style="color:#4fc3f7; margin-bottom:8px;">操作说明</div>
+		<div>点击地面移动角色</div>
+		<div>拖拽移动视角</div>
+		<div>滚轮缩放地图</div>
+		<div>走到地图边缘切换区域</div>
+	</div>
+
+	<div id="mobile-control">
+		<div class="control-header">
+			<div class="player-avatar">
+				<canvas id="playerAvatar" width="32" height="32"></canvas>
+			</div>
+			<div class="player-info">
+				<span class="player-name">探索者</span>
+				<span class="player-status" id="playerStatus">待机中</span>
+			</div>
+		</div>
+		<div class="control-body">
+			<div class="input-area">
+				<input type="text" id="commandInput" placeholder="输入指令，例如：去和蓝衣服的人打招呼" />
+				<button id="sendBtn">发送</button>
+			</div>
+			<div class="quick-actions">
+				<button class="action-btn" data-action="greet">打招呼</button>
+				<button class="action-btn" data-action="random">随机走走</button>
+				<button class="action-btn" data-action="chat">找最近的人</button>
+				<button class="action-btn" data-action="stop">停止</button>
+			</div>
+		</div>
+		<div class="status-bar">
+			<span id="statusText">就绪</span>
+		</div>
+	</div>
+
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+	<script type="text/javascript">
+		window._AMapSecurityConfig = {
+			securityJsCode: '96b4709de65a30226b9269d0de610010',
+		}
+	</script>
+	<script src="https://webapi.amap.com/maps?v=2.0&key=9c1e0cd284d521dbfca4a5b14b85f4a3"></script>
+
+	<script src="js/utils.js"></script>
+	<script src="js/pathfinding.js"></script>
+	<script src="js/character.js"></script>
+	<script src="js/zhanjiang_game.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const game = new ZhanjiangGame('gameCanvas');
+
+			game.createPlayer('探索者', {
+				glowColor: '#4fc3f7',
+				personality: 'friendly'
+			});
+
+			game.initAICrowd(12);
+			game.start();
+
+			setTimeout(() => {
+				if (typeof initAmapData === 'function') initAmapData();
+			}, 1000);
+
+			bindUIEvents(game);
+
+			window.addEventListener('resize', () => game.resize());
+
+			setTimeout(() => {
+				document.getElementById('controls-hint').classList.remove('show');
+			}, 4000);
+
+			setInterval(() => {
+				const zoneNameEl = document.getElementById('zoneName');
+				const zoneName = ZONE_NAMES[game.currentZone.y][game.currentZone.x];
+				if (zoneNameEl.textContent !== zoneName) {
+					zoneNameEl.textContent = zoneName;
+				}
+			}, 500);
+		});
+
+		function bindUIEvents(game) {
+			const commandInput = document.getElementById('commandInput');
+			const sendBtn = document.getElementById('sendBtn');
+			const actionBtns = document.querySelectorAll('.action-btn');
+			const statusText = document.getElementById('statusText');
+			const playerStatus = document.getElementById('playerStatus');
+
+			function sendCommand() {
+				const command = commandInput.value.trim();
+				if (!command) return;
+				statusText.textContent = '执行: ' + command;
+				game.executeCommand(command);
+				commandInput.value = '';
+			}
+
+			sendBtn.addEventListener('click', sendCommand);
+			commandInput.addEventListener('keypress', (e) => {
+				if (e.key === 'Enter') sendCommand();
+			});
+
+			actionBtns.forEach(btn => {
+				btn.addEventListener('click', () => {
+					const action = btn.dataset.action;
+					switch(action) {
+						case 'greet': commandInput.value = '打招呼'; break;
+						case 'random': commandInput.value = '随机走走'; break;
+						case 'chat': commandInput.value = '找最近的人聊天'; break;
+						case 'stop': commandInput.value = '停止'; break;
+					}
+					sendCommand();
+				});
+			});
+
+			if ('ontouchstart' in window) {
+				document.body.classList.add('touch-device');
+				let lastTouchEnd = 0;
+				document.addEventListener('touchend', (e) => {
+					const now = Date.now();
+					if (now - lastTouchEnd <= 300) e.preventDefault();
+					lastTouchEnd = now;
+				}, false);
+			}
+
+			document.addEventListener('touchmove', (e) => {
+				if (e.target === game.canvas) e.preventDefault();
+			}, { passive: false });
+
+			const observer = new MutationObserver((mutations) => {
+				mutations.forEach((m) => {
+					if (m.target.id === 'statusText') {
+						playerStatus.textContent = m.target.textContent;
+					}
+				});
+			});
+			observer.observe(statusText, { childList: true });
+		}
+	</script>
+</body>
+</html>

@@ -88,16 +88,14 @@ class PathFinder {
             closedSet.add(currentKey);
 
             // 检查四个方向邻居（上下左右）
-            const neighbors = [
-                { x: current.x + 1, y: current.y },
-                { x: current.x - 1, y: current.y },
-                { x: current.x, y: current.y + 1 },
-                { x: current.x, y: current.y - 1 }
+            const directions = [
+                { x: 1, y: 0 }, { x: -1, y: 0 },
+                { x: 0, y: 1 }, { x: 0, y: -1 }
             ];
 
-            for (const neighbor of neighbors) {
+            for (const dir of directions) {
+                const neighbor = { x: current.x + dir.x, y: current.y + dir.y };
                 const neighborKey = `${neighbor.x},${neighbor.y}`;
-
                 if (closedSet.has(neighborKey)) continue;
                 if (!this.isWalkable(neighbor.x, neighbor.y)) continue;
 

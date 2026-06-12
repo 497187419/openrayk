@@ -174,9 +174,6 @@ class Character {
             this.renderX = this.prevGridX + (this.gridX - this.prevGridX) * easeProgress;
             this.renderY = this.prevGridY + (this.gridY - this.prevGridY) * easeProgress;
 
-            // 上下起伏动画（走路时的弹跳感）
-            this.bobOffset = Math.sin(progress * Math.PI * 2) * 3;
-
             // 走路动画帧切换
             if (this.animTimer > 150) {
                 this.walkFrame = this.walkFrame === 0 ? 1 : 0;
@@ -189,7 +186,6 @@ class Character {
                 this.isMoving = false;
                 this.renderX = this.gridX;
                 this.renderY = this.gridY;
-                this.bobOffset = 0;
                 this.walkFrame = 0;
                 this.needsRedraw = true;
 
@@ -203,7 +199,6 @@ class Character {
         } else {
             this.renderX = this.gridX;
             this.renderY = this.gridY;
-            this.bobOffset = 0;
             this.walkFrame = 0;
         }
 
@@ -372,7 +367,6 @@ class Character {
             this.isMoving = false;
             this.renderX = this.gridX;
             this.renderY = this.gridY;
-            this.bobOffset = 0;
             this.needsRedraw = true;
         }, this.moveSpeed);
     }
@@ -422,7 +416,7 @@ class Character {
 
         // 使用渲染位置（插值后的平滑位置），并居中于格子
         const screenX = isoX + (tileW - 32 * zoom) / 2;
-        const screenY = isoY + (tileH - 40 * zoom) / 2 - 20 * zoom - this.bobOffset * zoom;
+        const screenY = isoY + (tileH - 40 * zoom) / 2 - 20 * zoom;
 
         // 缩放后的尺寸
         const spriteW = 32 * zoom;
