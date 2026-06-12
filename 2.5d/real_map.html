@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>湛江赤坎区 - 真实地图网格</title>
+	<link rel="stylesheet" href="css/style.css">
+	<style>
+		#loading-overlay {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: #0a0e27;
+			z-index: 200;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			flex-direction: column;
+			transition: opacity 0.5s;
+		}
+		#loading-overlay.hidden {
+			opacity: 0;
+			pointer-events: none;
+		}
+		#loading-text {
+			color: #4fc3f7;
+			font-size: 12px;
+			margin-top: 16px;
+			font-family: 'Press Start 2P', 'Courier New', monospace;
+		}
+		#loading-bar {
+			width: 240px;
+			height: 4px;
+			background: #1a2a4a;
+			margin-top: 12px;
+			border-radius: 2px;
+			overflow: hidden;
+		}
+		#loading-bar-inner {
+			width: 0%;
+			height: 100%;
+			background: #4fc3f7;
+			transition: width 0.3s;
+		}
+		#coord-info {
+			position: fixed;
+			top: 10px;
+			right: 10px;
+			z-index: 100;
+			background: rgba(10, 14, 39, 0.85);
+			border: 1px solid rgba(79, 195, 247, 0.3);
+			border-radius: 6px;
+			padding: 8px 12px;
+			color: #4fc3f7;
+			font-size: 10px;
+			pointer-events: none;
+			font-family: 'Press Start 2P', 'Courier New', monospace;
+			line-height: 1.8;
+		}
+		#coord-info .label {
+			color: #8b9bb4;
+			font-size: 9px;
+		}
+		#legend {
+			position: fixed;
+			bottom: 10px;
+			left: 10px;
+			z-index: 100;
+			background: rgba(10, 14, 39, 0.85);
+			border: 1px solid rgba(79, 195, 247, 0.3);
+			border-radius: 6px;
+			padding: 8px 12px;
+			color: #e0e6ed;
+			font-size: 10px;
+			pointer-events: none;
+			font-family: 'Press Start 2P', 'Courier New', monospace;
+			line-height: 1.8;
+		}
+		.legend-item {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.legend-color {
+			width: 12px;
+			height: 12px;
+			border-radius: 2px;
+		}
+		#controls-hint {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			z-index: 90;
+			background: rgba(10, 14, 39, 0.9);
+			border: 1px solid rgba(79, 195, 247, 0.3);
+			border-radius: 8px;
+			padding: 16px 20px;
+			color: #e0e6ed;
+			font-size: 10px;
+			text-align: center;
+			line-height: 1.8;
+			opacity: 0;
+			transition: opacity 0.5s;
+			pointer-events: none;
+			font-family: 'Press Start 2P', 'Courier New', monospace;
+		}
+		#controls-hint.show {
+			opacity: 1;
+		}
+	</style>
+</head>
+<body>
+	<div id="amap-container" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;"></div>
+	<div id="game-container" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;background:transparent;">
+		<canvas id="gameCanvas"></canvas>
+	</div>
+
+	<div id="loading-overlay">
+		<div style="color:#4fc3f7;font-size:16px;font-family:'Press Start 2P',monospace;">地图加载中</div>
+		<div id="loading-bar"><div id="loading-bar-inner"></div></div>
+		<div id="loading-text">正在连接高德地图...</div>
+	</div>
+
+	<div id="coord-info">
+		<div class="label">当前坐标</div>
+		<div>经度: <span id="lngText">--</span></div>
+		<div>纬度: <span id="latText">--</span></div>
+	</div>
+
+	<div id="legend">
+		<div style="color:#4fc3f7;margin-bottom:4px;">图例</div>
+		<div class="legend-item"><div class="legend-color" style="background:#0f1535;border:1px solid #1a2a4a;"></div>可行走</div>
+		<div class="legend-item"><div class="legend-color" style="background:#1a2744;border:1px solid #2a3f5f;"></div>建筑物</div>
+		<div class="legend-item"><div class="legend-color" style="background:#69f0ae;"></div>当前位置</div>
+	</div>
+
+	<div id="controls-hint" class="show">
+		<div style="color:#4fc3f7;margin-bottom:8px;">操作说明</div>
+		<div>点击地面移动角色</div>
+		<div>方向键 / WASD 控制移动</div>
+		<div>拖拽移动视角</div>
+		<div>滚轮缩放地图</div>
+	</div>
+
+	<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+	<script src="https://webapi.amap.com/maps?v=2.0&key=9c1e0cd284d521dbfca4a5b14b85f4a3"></script>
+	<script src="js/utils.js"></script>
+	<script src="js/pathfinding.js"></script>
+	<script src="js/character.js"></script>
+	<script src="js/real_map_game.js"></script>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			const game = new RealMapGame('gameCanvas');
+			window.addEventListener('resize', () => game.resize());
+			game.start();
+
+			setTimeout(() => {
+				document.getElementById('controls-hint').classList.remove('show');
+			}, 5000);
+		});
+	</script>
+</body>
+</html>

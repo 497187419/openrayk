@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>参观路线示意图复刻</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:"Microsoft YaHei",SimHei,sans-serif;}
+body{padding:20px;background:#fff;}
+.container{max-width:980px;margin:0 auto;border:1px solid #333;position:relative;}
+.title{text-align:center;font-size:28px;color:#ff6600;font-weight:bold;padding:15px 0;}
+.svg-wrap{position:relative;}
+.bottom-text{padding:15px 20px;line-height:1.8;font-size:15px;color:#d00;}
+.legend{display:flex;gap:25px;padding:10px 20px;align-items:center;font-size:14px;}
+.legend-item{display:flex;align-items:center;gap:6px;}
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="title">参观路线示意图</div>
+    <div class="svg-wrap">
+<svg width="960" height="1120" viewBox="0 0 960 1120" xmlns="http://www.w3.org/2000/svg">
+    <!-- 外边界轮廓 -->
+    <path d="M40,40 L920,60 L935,980 L30,990 Z" fill="none" stroke="#222" stroke-width="2"/>
+
+    <!-- 外围道路文字标注 -->
+    <text x="15" y="110" font-size="16">蟠中东路</text>
+    <text x="125" y="120" writing-mode="tb" font-size="18">诸光路</text>
+    <text x="895" y="280" writing-mode="tb" font-size="18">涞港路</text>
+    <text x="420" y="900" font-size="18">盈港东路</text>
+    <text x="25" y="365" font-size="15">徐民东路</text>
+
+    <!-- 环形外围数字门牌号 1~21 -->
+    <circle cx="480" cy="840" r="12" fill="#fff" stroke="#000"/>
+    <text x="480" y="845" text-anchor="middle">1</text>
+    <circle cx="400" cy="800" r="12" fill="#fff" stroke="#000"/>
+    <text x="400" y="805" text-anchor="middle">2</text>
+    <circle cx="300" cy="760" r="12" fill="#fff" stroke="#000"/>
+    <text x="300" y="765" text-anchor="middle">3</text>
+    <circle cx="180" cy="660" r="12" fill="#fff" stroke="#000"/>
+    <text x="180" y="665" text-anchor="middle">4</text>
+    <circle cx="145" cy="560" r="12" fill="#fff" stroke="#000"/>
+    <text x="145" y="565" text-anchor="middle">5</text>
+    <circle cx="142" cy="460" r="12" fill="#fff" stroke="#000"/>
+    <text x="142" y="465" text-anchor="middle">6</text>
+    <circle cx="142" cy="360" r="12" fill="#fff" stroke="#000"/>
+    <text x="142" y="365" text-anchor="middle">7</text>
+    <circle cx="142" cy="260" r="12" fill="#fff" stroke="#000"/>
+    <text x="142" y="265" text-anchor="middle">8</text>
+    <circle cx="142" cy="140" r="12" fill="#fff" stroke="#000"/>
+    <text x="142" y="145" text-anchor="middle">9</text>
+    <circle cx="825" cy="135" r="12" fill="#fff" stroke="#000"/>
+    <text x="825" y="140" text-anchor="middle">12</text>
+    <circle cx="860" cy="235" r="12" fill="#fff" stroke="#000"/>
+    <text x="860" y="240" text-anchor="middle">13</text>
+    <circle cx="875" cy="335" r="12" fill="#fff" stroke="#000"/>
+    <text x="875" y="340" text-anchor="middle">14</text>
+    <circle cx="878" cy="415" r="12" fill="#fff" stroke="#000"/>
+    <text x="878" y="420" text-anchor="middle">15</text>
+    <circle cx="878" cy="495" r="12" fill="#fff" stroke="#000"/>
+    <text x="878" y="500" text-anchor="middle">16</text>
+    <circle cx="878" cy="585" r="12" fill="#fff" stroke="#000"/>
+    <text x="878" y="590" text-anchor="middle">17</text>
+    <circle cx="878" cy="665" r="12" fill="#fff" stroke="#000"/>
+    <text x="878" y="670" text-anchor="middle">18</text>
+    <circle cx="878" cy="745" r="12" fill="#fff" stroke="#000"/>
+    <text x="878" y="750" text-anchor="middle">19</text>
+    <circle cx="815" cy="865" r="12" fill="#fff" stroke="#000"/>
+    <text x="815" y="870" text-anchor="middle">20</text>
+    <circle cx="725" cy="895" r="12" fill="#fff" stroke="#000"/>
+    <text x="725" y="900" text-anchor="middle">21</text>
+
+    <!-- 左侧P1/P2/P3绿色停车区 -->
+    <rect x="30" y="160" width="55" height="130" fill="#b0e880" stroke="#222"/>
+    <circle cx="58" cy="225" r="14" fill="#2040d0"/>
+    <text x="58" y="230" fill="#fff" text-anchor="middle" font-size="14">P3</text>
+
+    <rect x="30" y="300" width="55" height="120" fill="#b0e880" stroke="#222"/>
+    <circle cx="58" cy="355" r="14" fill="#2040d0"/>
+    <text x="58" y="360" fill="#fff" text-anchor="middle" font-size="14">P2</text>
+
+    <rect x="30" y="430" width="55" height="115" fill="#b0e880" stroke="#222"/>
+    <circle cx="58" cy="480" r="14" fill="#2040d0"/>
+    <text x="58" y="485" fill="#fff" text-anchor="middle" font-size="14">P1</text>
+
+    <!-- 所有停车场P图标 -->
+    <g id="parkings">
+        <circle cx="200" cy="210" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="200" y="215" fill="#fff" text-anchor="middle">P</text>
+
+        <circle cx="835" cy="215" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="835" y="220" fill="#fff" text-anchor="middle">P</text>
+
+        <circle cx="295" cy="700" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="295" y="705" fill="#fff" text-anchor="middle">P</text>
+
+        <circle cx="415" cy="745" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="415" y="750" fill="#fff" text-anchor="middle">P</text>
+
+        <circle cx="725" cy="725" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="725" y="730" fill="#fff" text-anchor="middle">P</text>
+
+        <circle cx="810" cy="705" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="810" y="710" fill="#fff" text-anchor="middle">P7</text>
+
+        <circle cx="810" cy="785" r="14" fill="#2040d0" stroke="#000"/>
+        <text x="810" y="790" fill="#fff" text-anchor="middle">P8</text>
+    </g>
+
+    <!-- 中央广场环形道路 -->
+    <circle cx="480" cy="440" r="110" fill="none" stroke="#333" stroke-width="3"/>
+    <circle cx="480" cy="440" r="75" fill="#e8e8e8" stroke="#333"/>
+    <text x="480" y="435" text-anchor="middle" font-size="16">中央广场</text>
+    <text x="480" y="455" text-anchor="middle" font-size="12">Central Plaza</text>
+
+    <!-- 6个展馆区域 -->
+    <!-- 左上 4.1H -->
+    <path d="M210,220 L340,120 L435,145 L405,280 L260,330 Z" fill="#f0f0f2" stroke="#222" stroke-width="2"/>
+    <text x="290" y="245" font-size="22" font-weight="bold">4.1H</text>
+    <!-- 上中 3H -->
+    <path d="M350,110 L475,95 L535,140 L465,255 L365,230 Z" fill="#f0f0f2" stroke="#222" stroke-width="2"/>
+    <text x="405" y="165" font-size="22" font-weight="bold">3H</text>
+    <!-- 右上 2.1H -->
+    <path d="M545,98 L675,115 L730,195 L635,290 L540,240 Z" fill="#f0f0f2" stroke="#222" stroke-width="2"/>
+    <text x="625" y="165" font-size="22" font-weight="bold">2.1H</text>
+    <!-- 右上部 1.1H -->
+    <path d="M735,198 L805,265 L765,385 L645,355 L660,260 Z" fill="#f0f0f2" stroke="#222" stroke-width="2"/>
+    <text x="745" y="285" font-size="22" font-weight="bold">1.1H</text>
+    <!-- 右下 8.1H -->
+    <path d="M755,395 L815,515 L755,625 L635,575 L655,450 Z" fill="#f0f0f2" stroke="#222" stroke-width="2"/>
+    <text x="740" y="495" font-size="22" font-weight="bold">8.1H</text>
+    <!-- 右下橙色7.1H -->
+    <path d="M625,455 L605,570 L515,625 L475,520 L535,440 Z" fill="#f8bc70" stroke="#222" stroke-width="2"/>
+    <text x="570" y="530" font-size="26" font-weight="bold" fill="#c03000">7.1H</text>
+    <!-- 左下橙色6.1H -->
+    <path d="M465,435 L425,555 L335,615 L275,515 L325,430 Z" fill="#f8bc70" stroke="#222" stroke-width="2"/>
+    <text x="370" y="525" font-size="26" font-weight="bold" fill="#c03000">6.1H</text>
+    <!-- 左下橙色5.1H -->
+    <path d="M265,335 L215,455 L275,565 L355,475 L340,360 Z" fill="#f8bc70" stroke="#222" stroke-width="2"/>
+    <text x="300" y="445" font-size="26" font-weight="bold" fill="#c03000">5.1H</text>
+
+    <!-- 登录厅 -->
+    <rect x="165,355" width="85" height="75" fill="#fef280" stroke="#222"/>
+    <text x="208" y="392" text-anchor="middle" font-size="13">西登录厅</text>
+    <rect x="445,585" width="88" height="55" fill="#fef280" stroke="#222"/>
+    <text x="489" y="615" text-anchor="middle" font-size="13">南登录厅</text>
+    <rect x="775,330" width="80" height="82" fill="#f0f0f2" stroke="#222"/>
+    <text x="815" y="372" text-anchor="middle" font-size="13">东登录厅</text>
+    <rect x="468,105" width="92" height="45" fill="#f0f0f2" stroke="#222"/>
+    <text x="514" y="132" text-anchor="middle" font-size="12">北登录厅(北馆)</text>
+
+    <!-- 进馆路线 蓝色虚线箭头 -->
+    <defs>
+        <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#0066cc"/>
+        </marker>
+        <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#009933"/>
+        </marker>
+    </defs>
+    <path d="M250,390 Q360,390 440,400" stroke="#0066cc" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#arrowBlue)" fill="none"/>
+    <path d="M480,500 L480,565" stroke="#0066cc" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#arrowBlue)" fill="none"/>
+    <path d="M525,630 Q650,660 780,675" stroke="#0066cc" stroke-width="2" stroke-dasharray="6 3" marker-end="url(#arrowBlue)" fill="none"/>
+
+    <!-- 自驾车绿色箭头路线 -->
+    <path d="M85,225 L130,225" stroke="#009933" stroke-width="3" marker-end="url(#arrowGreen)" fill="none"/>
+    <path d="M85,355 L130,355" stroke="#009933" stroke-width="3" marker-end="url(#arrowGreen)" fill="none"/>
+    <path d="M85,480 L130,480" stroke="#009933" stroke-width="3" marker-end="url(#arrowGreen)" fill="none"/>
+    <path d="M885,670 L845,670" stroke="#009933" stroke-width="3" marker-end="url(#arrowGreen)" fill="none"/>
+
+    <!-- 观众服务台 红框箭头 -->
+    <g transform="translate(180,415)">
+        <rect x="0" y="0" width="32" height="32" fill="none" stroke="#d00" stroke-width="2"/>
+        <path d="M16,28 L16,12 L8,18 M16,12 L24,18" stroke="#d00" stroke-width="2" fill="none"/>
+    </g>
+    <g transform="translate(505,535)">
+        <rect x="0" y="0" width="32" height="32" fill="none" stroke="#d00" stroke-width="2"/>
+        <path d="M16,28 L16,12 L8,18 M16,12 L24,18" stroke="#d00" stroke-width="2" fill="none"/>
+    </g>
+
+    <!-- 地铁标识小图标 -->
+    <rect x="152,378" width="24" height="28" fill="#2040d0"/>
+    <text x="164" y="396" fill="#fff" font-size="11" text-anchor="middle">地铁</text>
+    <rect x="518,472" width="24" height="28" fill="#2040d0"/>
+    <text x="530" y="490" fill="#fff" font-size="11" text-anchor="middle">地铁</text>
+    <rect x="545,658" width="24" height="28" fill="#2040d0"/>
+    <text x="557" y="676" fill="#fff" font-size="11" text-anchor="middle">地铁</text>
+</svg>
+    </div>
+
+    <!-- 图例区域 -->
+    <div class="legend">
+        <div class="legend-item">
+            <svg width="32" height="16"><path d="M0,8 L22,8" stroke="#0066cc" stroke-width="2" stroke-dasharray="5 2"/><polygon points="22 4, 30 8, 22 12" fill="#0066cc"/></svg>
+            <span>进馆路线</span>
+        </div>
+        <div class="legend-item">
+            <svg width="32" height="16"><path d="M0,8 L22,8" stroke="#009933" stroke-width="3"/><polygon points="22 4, 30 8, 22 12" fill="#009933"/></svg>
+            <span>自驾车至现场路线</span>
+        </div>
+        <div class="legend-item">
+            <svg width="24" height="24"><rect x="1" y="1" width="20" height="20" stroke="#d00" stroke-width="2" fill="none"/><path d="M11,18 L11,6 L5,11 M11,6 L17,11" stroke="#d00" stroke-width="2"/></svg>
+            <span>观众服务台</span>
+        </div>
+        <div class="legend-item">
+            <svg width="24" height="24"><circle cx="12" cy="12" r="10" fill="#2040d0"/><text x="12" y="16" fill="#fff" font-size="12" text-anchor="middle">P</text></svg>
+            <span>停车场</span>
+        </div>
+    </div>
+
+    <!-- 底部红色交通文字 -->
+    <div class="bottom-text">
+地铁：2号线（徐泾东站），17号线（诸光路站）<br>
+导航地址：国家会展中心6号门（上海市诸光路1888号）<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;国家会展中心18号门（上海市涞港路西50米）
+    </div>
+</div>
+</body>
+</html>

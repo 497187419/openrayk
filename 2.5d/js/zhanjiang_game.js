@@ -197,15 +197,23 @@ class ZoneMap {
 	}
 
 	gridToScreen(gridX, gridY) {
+		const tileW = this.tileSize * this.zoom;
+		const tileH = tileW * 0.5;
+		const cx = (gridX - gridY) * tileW / 2 + this.cameraX;
+		const cy = (gridX + gridY) * tileH / 2 + this.cameraY;
 		return {
-			x: gridX * this.tileSize * this.zoom + this.cameraX,
-			y: gridY * this.tileHeight * this.zoom + this.cameraY
+			x: cx - tileW / 2,
+			y: cy - tileH / 2
 		};
 	}
 
 	screenToGrid(screenX, screenY) {
-		const gridX = Math.floor((screenX - this.cameraX) / (this.tileSize * this.zoom));
-		const gridY = Math.floor((screenY - this.cameraY) / (this.tileHeight * this.zoom));
+		const tileW = this.tileSize * this.zoom;
+		const tileH = tileW * 0.5;
+		const cx = screenX + tileW / 2 - this.cameraX;
+		const cy = screenY + tileH / 2 - this.cameraY;
+		const gridX = Math.floor((cx / (tileW / 2) + cy / (tileH / 2)) / 2);
+		const gridY = Math.floor((cy / (tileH / 2) - cx / (tileW / 2)) / 2);
 		return { x: gridX, y: gridY };
 	}
 
@@ -278,24 +286,32 @@ class ZoneMap {
 		const minY = Math.max(0, Math.min(...corners.map(c => c.y)) - 2);
 		const maxY = Math.min(this.height - 1, Math.max(...corners.map(c => c.y)) + 2);
 
+		const tilesToDraw = [];
 		for (let y = minY; y <= maxY; y++) {
 			for (let x = minX; x <= maxX; x++) {
 				if (x < 0 || x >= this.width || y < 0 || y >= this.height) continue;
-				const tile = this.tiles[y][x];
-				const pos = this.gridToScreen(x, y);
-				this.drawTile(ctx, pos.x, pos.y, tile);
+				tilesToDraw.push({ x, y, tile: this.tiles[y][x] });
 			}
 		}
+		tilesToDraw.sort((a, b) => (a.x + a.y) - (b.x + b.y));
+		tilesToDraw.forEach(({ x, y, tile }) => {
+			const pos = this.gridToScreen(x, y);
+			this.drawTile(ctx, pos.x, pos.y, tile);
+		});
 	}
 
 	drawTile(ctx, x, y, tile) {
 		const w = this.tileSize * this.zoom;
-		const h = this.tileHeight * this.zoom;
+		const h = w * 0.5;
+		const cx = x + w / 2;
+		const cy = y + h / 2;
+		const hw = w / 2;
+		const hh = h / 2;
 		const points = [
-			{ x: x, y: y },
-			{ x: x + w, y: y },
-			{ x: x + w, y: y + h },
-			{ x: x, y: y + h }
+			{ x: cx, y: cy - hh },
+			{ x: cx + hw, y: cy },
+			{ x: cx, y: cy + hh },
+			{ x: cx - hw, y: cy }
 		];
 
 		let fillColor, strokeColor;
@@ -341,26 +357,43 @@ class ZoneMap {
 		ctx.stroke();
 
 		if (tile.type === TILE_TYPES.BUILDING) {
-			const cx = x + w / 2;
-			const cy = y + h / 2;
 			const s = Math.max(1, this.zoom);
-			ctx.fillStyle = 'rgba(100, 116, 139, 0.6)';
-			ctx.fillRect(cx - 3*s, cy - 3*s, 6*s, 6*s);
-			ctx.fillStyle = 'rgba(148, 163, 184, 0.4)';
-			ctx.fillRect(cx - 2*s, cy - 4*s, 4*s, 2*s);
+			const elev = hh * 0.5;
+			const topPoints = points.map(p => ({ x: p.x, y: p.y - elev }));
+
+			ctx.fillStyle = 'rgba(100, 116, 139, 0.8)';
+			ctx.beginPath();
+			ctx.moveTo(points[1].x, points[1].y);
+			ctx.lineTo(points[2].x, points[2].y);
+			ctx.lineTo(topPoints[2].x, topPoints[2].y);
+			ctx.lineTo(topPoints[1].x, topPoints[1].y);
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.fillStyle = 'rgba(71, 85, 105, 0.8)';
+			ctx.beginPath();
+			ctx.moveTo(points[2].x, points[2].y);
+			ctx.lineTo(points[3].x, points[3].y);
+			ctx.lineTo(topPoints[3].x, topPoints[3].y);
+			ctx.lineTo(topPoints[2].x, topPoints[2].y);
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.fillStyle = 'rgba(148, 163, 184, 0.9)';
+			ctx.beginPath();
+			ctx.moveTo(topPoints[0].x, topPoints[0].y);
+			for (let i = 1; i < topPoints.length; i++) ctx.lineTo(topPoints[i].x, topPoints[i].y);
+			ctx.closePath();
+			ctx.fill();
 		}
 
 		if (tile.type === TILE_TYPES.WATER) {
-			const cx = x + w / 2;
-			const cy = y + h / 2;
 			const s = Math.max(1, this.zoom);
 			ctx.fillStyle = 'rgba(96, 165, 250, 0.4)';
 			ctx.fillRect(cx - 3*s, cy - 1*s, 6*s, 2*s);
 		}
 
 		if (tile.type === TILE_TYPES.ZONE_EDGE) {
-			const cx = x + w / 2;
-			const cy = y + h / 2;
 			const s = Math.max(1, this.zoom);
 			ctx.fillStyle = 'rgba(79, 195, 247, 0.5)';
 			ctx.beginPath();
@@ -883,10 +916,10 @@ class ZhanjiangGame {
 		map.draw(ctx, w, h);
 
 		const tileW = this.tileSize * map.zoom;
-		const tileH = map.tileHeight * map.zoom;
+		const tileH = tileW * 0.5;
 
 		const charList = Array.from(this.characters.values());
-		charList.sort((a, b) => a.renderY - b.renderY);
+		charList.sort((a, b) => (a.renderX + a.renderY) - (b.renderX + b.renderY));
 
 		charList.forEach(char => {
 			const pos = map.gridToScreen(char.renderX, char.renderY);
