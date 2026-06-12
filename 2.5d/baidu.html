@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Hello, World - 像素小人</title>
+  <style type="text/css">
+    html { height: 100% }
+    body { height: 100%; margin: 0px; padding: 0px; background: #f5f5f5; font-family: sans-serif; }
+    #container { height: 100% }
+    #error-tip {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 420px;
+      z-index: 100;
+    }
+    #error-tip.show { display: block; }
+    #error-tip h3 { color: #d32f2f; margin: 0 0 12px; }
+    #error-tip p { color: #666; font-size: 14px; line-height: 1.8; margin: 0; }
+    #error-tip code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    #error-tip .btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 20px;
+      background: #1976d2;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    #error-tip .btn:hover { background: #1565c0; }
+    #gameCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      pointer-events: none;
+    }
+  </style>
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=nfd04q1Q21mo6a55UEnpJkaNMRza8L8r"></script>
+</head>
+<body>
+  <div id="container"></div>
+  <canvas id="gameCanvas"></canvas>
+  <div id="error-tip">
+    <h3>地图加载失败</h3>
+    <p>
+      检测到浏览器拦截了百度地图 API（<code>ERR_BLOCKED_BY_CLIENT</code>）。<br><br>
+      <strong>排查步骤：</strong><br>
+      1. 关闭广告拦截扩展（uBlock / AdGuard / 360广告过滤）<br>
+      2. 按 <code>Ctrl+Shift+N</code> 打开无痕模式访问本页<br>
+      3. 检查 360安全卫士 / 电脑管家的"浏览器保护"功能<br>
+      4. 换用 Edge / Firefox / 其他浏览器测试<br><br>
+      <button class="btn" onclick="location.reload()">刷新重试</button>
+    </p>
+  </div>
+  <script type="text/javascript">
+    if (typeof BMapGL === 'undefined') {
+      document.getElementById('error-tip').classList.add('show');
+    } else {
+      var map = new BMapGL.Map("container", { enableInertialDragging: false });
+      var point = new BMapGL.Point(116.404, 39.915);
+      map.enableScrollWheelZoom();
+      map.centerAndZoom(point, 20);
+      map.setHeading(64.5);
+      map.setTilt(73);
+
+      // ==================== 像素小人角色 ====================
+      class PixelCharacter {
+        constructor(name) {
+          this.name = name || '玩家';
+          this.point = null;           // 当前 BMapGL.Point（插值中）
+          this.targetPoint = null;     // 目标点
+          this.startPoint = null;      // 起始点（插值用）
+          this.isMoving = false;
+          this.moveStartTime = 0;
+          this.moveDuration = 180;     // 毫秒/步
+          this.direction = 'down';     // up/down/left/right（屏幕方向）
+          this.walkFrame = 0;          // 走路动画帧 0|1
+          this.animTimer = 0;
+
+          // 外观
+          this.skinColor = '#f5d0b0';
+          this.hairColor = '#3e2723';
+          this.clothesColor = '#4fc3f7';
+          this.pantsColor = '#1565c0';
+          this.hairStyle = 0;
+          this.glowColor = '#4fc3f7';
+
+          // 像素精灵缓存
+          this.pixelCanvas = document.createElement('canvas');
+          this.pixelCanvas.width = 32;
+          this.pixelCanvas.height = 40;
+          this.pixelCtx = this.pixelCanvas.getContext('2d');
+          this.needsRedraw = true;
+        }
+
+        renderPixelSprite() {
+          if (!this.needsRedraw) return;
+          const ctx = this.pixelCtx;
+          ctx.clearRect(0, 0, 32, 40);
+          const rect = (x, y, w, h, color) => { ctx.fillStyle = color; ctx.fillRect(x, y, w, h); };
+
+          // 腿
+          const legOffset = this.isMoving && this.walkFrame === 1 ? 1 : 0;
+          rect(10, 32, 4, 8, this.pantsColor);
+          rect(18, 32 - legOffset, 4, 8, this.pantsColor);
+
+          // 躯干
+          rect(10, 18, 12, 14, this.clothesColor);
+
+          // 手臂
+          const armOffset = this.isMoving && this.walkFrame === 1 ? 2 : 0;
+          rect(6, 20, 4, 10, this.clothesColor);
+          rect(22, 20 + armOffset, 4, 10, this.clothesColor);
+
+          // 手
+          rect(6, 30, 4, 3, this.skinColor);
+          rect(22, 30 + armOffset, 4, 3, this.skinColor);
+
+          // 脸
+          rect(10, 6, 12, 12, this.skinColor);
+
+          // 眼睛（根据屏幕朝向）
+          const eyeColor = '#1a1a2e';
+          if (this.direction === 'left') {
+            rect(12, 10, 2, 2, eyeColor);
+            rect(12, 14, 2, 1, '#e74c3c');
+          } else if (this.direction === 'right') {
+            rect(18, 10, 2, 2, eyeColor);
+            rect(18, 14, 2, 1, '#e74c3c');
+          } else {
+            rect(12, 10, 2, 2, eyeColor);
+            rect(18, 10, 2, 2, eyeColor);
+            rect(12, 14, 2, 1, '#e74c3c');
+            rect(18, 14, 2, 1, '#e74c3c');
+          }
+
+          // 嘴巴
+          rect(15, 16, 2, 1, '#c0392b');
+
+          // 头发
+          switch (this.hairStyle) {
+            case 0: // 短发
+              rect(8, 4, 16, 4, this.hairColor);
+              rect(8, 8, 2, 6, this.hairColor);
+              rect(22, 8, 2, 6, this.hairColor);
+              rect(10, 6, 12, 2, this.hairColor);
+              break;
+            case 1: // 长发
+              rect(8, 4, 16, 4, this.hairColor);
+              rect(6, 6, 4, 14, this.hairColor);
+              rect(22, 6, 4, 14, this.hairColor);
+              rect(10, 6, 12, 2, this.hairColor);
+              break;
+            case 2: // 爆炸头
+              rect(6, 2, 20, 6, this.hairColor);
+              rect(8, 8, 2, 4, this.hairColor);
+              rect(22, 8, 2, 4, this.hairColor);
+              rect(10, 4, 12, 2, this.hairColor);
+              break;
+            case 3: // 帽子
+              rect(8, 4, 16, 4, this.hairColor);
+              rect(6, 6, 20, 2, this.clothesColor);
+              rect(10, 8, 12, 2, this.hairColor);
+              break;
+          }
+
+          this.needsRedraw = false;
+        }
+
+        easeInOutCubic(t) {
+          return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+        }
+
+        moveTo(targetPoint, direction) {
+          this.startPoint = new BMapGL.Point(this.point.lng, this.point.lat);
+          this.targetPoint = targetPoint;
+          this.direction = direction;
+          this.isMoving = true;
+          this.moveStartTime = Date.now();
+          this.needsRedraw = true;
+        }
+
+        update(dt) {
+          this.animTimer += dt;
+          if (this.isMoving) {
+            const elapsed = Date.now() - this.moveStartTime;
+            const progress = Math.min(elapsed / this.moveDuration, 1);
+            const ease = this.easeInOutCubic(progress);
+
+            const lng = this.startPoint.lng + (this.targetPoint.lng - this.startPoint.lng) * ease;
+            const lat = this.startPoint.lat + (this.targetPoint.lat - this.startPoint.lat) * ease;
+            this.point = new BMapGL.Point(lng, lat);
+
+            // 走路动画帧
+            if (this.animTimer > 150) {
+              this.walkFrame = this.walkFrame === 0 ? 1 : 0;
+              this.animTimer = 0;
+              this.needsRedraw = true;
+            }
+
+            // 移动结束
+            if (progress >= 1) {
+              this.isMoving = false;
+              this.point = new BMapGL.Point(this.targetPoint.lng, this.targetPoint.lat);
+              this.walkFrame = 0;
+              this.needsRedraw = true;
+            }
+          }
+        }
+
+        draw(ctx, screenX, screenY, zoom) {
+          this.renderPixelSprite();
+          const spriteW = 32 * zoom;
+          const spriteH = 40 * zoom;
+          const centerX = screenX;
+          const bottomY = screenY; // 脚底中心
+
+          // 外发光
+          ctx.save();
+          ctx.shadowColor = this.glowColor;
+          ctx.shadowBlur = 15 * zoom;
+          ctx.fillStyle = this.glowColor;
+          ctx.beginPath();
+          ctx.ellipse(centerX, bottomY - 2 * zoom, 14 * zoom, 5 * zoom, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+
+          // 内光环
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+          ctx.beginPath();
+          ctx.ellipse(centerX, bottomY - 2 * zoom, 10 * zoom, 3 * zoom, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 光环边框
+          ctx.strokeStyle = this.glowColor;
+          ctx.lineWidth = Math.max(1, 1.5 * zoom);
+          ctx.beginPath();
+          ctx.ellipse(centerX, bottomY - 2 * zoom, 14 * zoom, 5 * zoom, 0, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // 阴影
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
+          ctx.beginPath();
+          ctx.ellipse(centerX, bottomY + 2 * zoom, 12 * zoom, 4 * zoom, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 像素精灵（脚底对齐 screenX, screenY）
+          ctx.drawImage(this.pixelCanvas, centerX - spriteW / 2, bottomY - spriteH, spriteW, spriteH);
+
+          // 名字
+          const nameFontSize = Math.max(6, 8 * zoom);
+          ctx.font = 'bold ' + nameFontSize + 'px monospace';
+          ctx.textAlign = 'center';
+          const nameWidth = ctx.measureText(this.name).width;
+          const namePadding = 4 * zoom;
+          const nameBgY = bottomY + 6 * zoom;
+
+          // 名字背景
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+          ctx.beginPath();
+          ctx.roundRect(
+            centerX - nameWidth / 2 - namePadding,
+            nameBgY - nameFontSize / 2 - 2 * zoom,
+            nameWidth + namePadding * 2,
+            nameFontSize + 4 * zoom,
+            3 * zoom
+          );
+          ctx.fill();
+
+          // 名字文字
+          ctx.fillStyle = '#fff';
+          ctx.fillText(this.name, centerX, nameBgY + nameFontSize / 3);
+
+          // 名字发光
+          ctx.save();
+          ctx.shadowColor = this.glowColor;
+          ctx.shadowBlur = 8 * zoom;
+          ctx.fillStyle = '#fff';
+          ctx.fillText(this.name, centerX, nameBgY + nameFontSize / 3);
+          ctx.restore();
+        }
+      }
+
+      // ==================== 主循环 & 控制 ====================
+      var canvas = document.getElementById('gameCanvas');
+      var ctx = canvas.getContext('2d');
+      var keysPressed = new Set();
+      var stepPixel = 30;   // 每步屏幕像素距离
+      var lastTime = 0;
+
+      function resize() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      window.addEventListener('resize', resize);
+      resize();
+
+      var player = new PixelCharacter('探索者');
+      player.point = new BMapGL.Point(116.404, 39.915);
+
+      function update(dt) {
+        if (!player.point) return;
+
+        // 处理按键移动（只有空闲时才触发下一步）
+        if (!player.isMoving) {
+          var dx = 0, dy = 0;
+          if (keysPressed.has('ArrowUp') || keysPressed.has('w') || keysPressed.has('W')) dy = -stepPixel;
+          else if (keysPressed.has('ArrowDown') || keysPressed.has('s') || keysPressed.has('S')) dy = stepPixel;
+          else if (keysPressed.has('ArrowLeft') || keysPressed.has('a') || keysPressed.has('A')) dx = -stepPixel;
+          else if (keysPressed.has('ArrowRight') || keysPressed.has('d') || keysPressed.has('D')) dx = stepPixel;
+
+          if (dx !== 0 || dy !== 0) {
+            var currentPixel = map.pointToPixel(player.point);
+            var targetPixel = new BMapGL.Pixel(currentPixel.x + dx, currentPixel.y + dy);
+            var targetPoint = map.pixelToPoint(targetPixel);
+
+            var dir = 'down';
+            if (dx > 0) dir = 'right';
+            else if (dx < 0) dir = 'left';
+            else if (dy < 0) dir = 'up';
+
+            player.moveTo(targetPoint, dir);
+          }
+        }
+
+        player.update(dt);
+
+        // 地图中心跟随小人
+        if (player.isMoving && player.point) {
+          map.setCenter(player.point);
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (!map || !player.point) return;
+
+        var pixel = map.pointToPixel(player.point);
+        player.draw(ctx, pixel.x, pixel.y, 1.2);
+      }
+
+      function loop(timestamp) {
+        var dt = timestamp - lastTime;
+        lastTime = timestamp;
+        update(dt);
+        draw();
+        requestAnimationFrame(loop);
+      }
+
+      window.addEventListener('keydown', function(e) {
+        if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].indexOf(e.key) !== -1) {
+          keysPressed.add(e.key);
+          e.preventDefault();
+        }
+      });
+      window.addEventListener('keyup', function(e) {
+        keysPressed.delete(e.key);
+      });
+
+      requestAnimationFrame(loop);
+    }
+  </script>
+</body>
+</html>

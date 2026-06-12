@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Hello, World</title>
+  <style type="text/css">
+    html { height: 100% }
+    body { height: 100%; margin: 0px; padding: 0px; background: #f5f5f5; font-family: sans-serif; }
+    #container { height: 100% }
+    #error-tip {
+      display: none;
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 24px 32px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      max-width: 420px;
+    }
+    #error-tip.show { display: block; }
+    #error-tip h3 { color: #d32f2f; margin: 0 0 12px; }
+    #error-tip p { color: #666; font-size: 14px; line-height: 1.8; margin: 0; }
+    #error-tip code { background: #f5f5f5; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+    #error-tip .btn {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 8px 20px;
+      background: #1976d2;
+      color: #fff;
+      border-radius: 4px;
+      text-decoration: none;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    #error-tip .btn:hover { background: #1565c0; }
+  </style>
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=nfd04q1Q21mo6a55UEnpJkaNMRza8L8r"></script>
+</head>
+<body>
+  <div id="container"></div>
+  <div id="error-tip">
+    <h3>地图加载失败</h3>
+    <p>
+      检测到浏览器拦截了百度地图 API（<code>ERR_BLOCKED_BY_CLIENT</code>）。<br><br>
+      <strong>排查步骤：</strong><br>
+      1. 关闭广告拦截扩展（uBlock / AdGuard / 360广告过滤）<br>
+      2. 按 <code>Ctrl+Shift+N</code> 打开无痕模式访问本页<br>
+      3. 检查 360安全卫士 / 电脑管家的"浏览器保护"功能<br>
+      4. 换用 Edge / Firefox / 其他浏览器测试<br><br>
+      <button class="btn" onclick="location.reload()">刷新重试</button>
+    </p>
+  </div>
+  <script type="text/javascript">
+    if (typeof BMapGL === 'undefined') {
+      document.getElementById('error-tip').classList.add('show');
+    } else {
+      var map = new BMapGL.Map("container");
+      var point = new BMapGL.Point(116.404, 39.915);
+      map.enableScrollWheelZoom();     //开启鼠标滚轮缩放
+      map.centerAndZoom(point, 20);
+      map.setHeading(64.5);   //设置地图旋转角度
+map.setTilt(73);       //设置地图的倾斜角度
+    }
+  </script>
+</body>
+</html>
