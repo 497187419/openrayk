@@ -48,12 +48,30 @@
       z-index: 10;
       pointer-events: none;
     }
+    #grid-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 20;
+      background: rgba(255,255,255,0.9);
+      padding: 8px 14px;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      font-size: 13px;
+      color: #333;
+      cursor: pointer;
+      user-select: none;
+    }
+    #grid-toggle input { vertical-align: middle; margin-right: 4px; cursor: pointer; }
   </style>
   <script type="text/javascript" src="https://api.map.baidu.com/api?v=1.0&type=webgl&ak=nfd04q1Q21mo6a55UEnpJkaNMRza8L8r"></script>
 </head>
 <body>
   <div id="container"></div>
   <canvas id="gameCanvas"></canvas>
+  <div id="grid-toggle">
+    <label><input type="checkbox" id="gridCheckbox"> 显示移动网格</label>
+  </div>
   <div id="error-tip">
     <h3>地图加载失败</h3>
     <p>
@@ -369,9 +387,46 @@
         }
       }
 
+      var showGrid = false;
+
+      function drawGrid() {
+        if (!showGrid || !player.point) return;
+        var origin = map.pointToPixel(player.point);
+        var cols = Math.ceil(canvas.width / stepPixel) + 2;
+        var rows = Math.ceil(canvas.height / stepPixel) + 2;
+        var offsetX = origin.x % stepPixel;
+        var offsetY = origin.y % stepPixel;
+
+        ctx.strokeStyle = 'rgba(79, 195, 247, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        for (var i = -1; i <= cols; i++) {
+          var x = i * stepPixel + offsetX;
+          ctx.moveTo(x, 0);
+          ctx.lineTo(x, canvas.height);
+        }
+        for (var j = -1; j <= rows; j++) {
+          var y = j * stepPixel + offsetY;
+          ctx.moveTo(0, y);
+          ctx.lineTo(canvas.width, y);
+        }
+        ctx.stroke();
+
+        // 高亮当前所在格子
+        ctx.strokeStyle = 'rgba(79, 195, 247, 0.9)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(
+          Math.floor(origin.x / stepPixel) * stepPixel + offsetX,
+          Math.floor(origin.y / stepPixel) * stepPixel + offsetY,
+          stepPixel, stepPixel
+        );
+      }
+
       function draw() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (!map || !player.point) return;
+
+        drawGrid();
 
         var pixel = map.pointToPixel(player.point);
         player.draw(ctx, pixel.x, pixel.y, 1.2);
@@ -393,6 +448,10 @@
       });
       window.addEventListener('keyup', function(e) {
         keysPressed.delete(e.key);
+      });
+
+      document.getElementById('gridCheckbox').addEventListener('change', function(e) {
+        showGrid = e.target.checked;
       });
 
       requestAnimationFrame(loop);
