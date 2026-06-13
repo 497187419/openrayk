@@ -79,6 +79,28 @@
       // 隐藏建筑
       map.setDisplayOptions({ building: false });
 
+      // ==================== 加载并渲染建筑数据 ====================
+      fetch('buildings.json')
+        .then(function(res) { return res.json(); })
+        .then(function(buildings) {
+          buildings.forEach(function(b) {
+            var path = b.coords.map(function(c) {
+              return new BMapGL.Point(c[0], c[1]);
+            });
+            var prism = new BMapGL.Prism(path, b.height, {
+              topFillColor: b.color,
+              topFillOpacity: 0.8,
+              sideFillColor: b.color,
+              sideFillOpacity: 0.9
+            });
+            map.addOverlay(prism);
+          });
+          console.log('已加载建筑数量: ' + buildings.length);
+        })
+        .catch(function(err) {
+          console.error('加载 buildings.json 失败:', err);
+        });
+
       // ==================== 像素小人角色 ====================
       class PixelCharacter {
         constructor(name) {
