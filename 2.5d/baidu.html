@@ -98,6 +98,7 @@
       map.setDisplayOptions({ building: false });
 
       // ==================== 加载并渲染建筑数据 ====================
+      var buildingPolygons = [];
       fetch('buildings.json')
         .then(function(res) { return res.json(); })
         .then(function(buildings) {
@@ -105,6 +106,7 @@
             var path = b.coords.map(function(c) {
               return new BMapGL.Point(c[0], c[1]);
             });
+            buildingPolygons.push(path);
             var prism = new BMapGL.Prism(path, b.height, {
               topFillColor: b.color,
               topFillOpacity: 0.8,
@@ -118,6 +120,19 @@
         .catch(function(err) {
           console.error('加载 buildings.json 失败:', err);
         });
+
+      // 射线法判断点是否在多边形内
+      function isPointInPolygon(point, polygon) {
+        var x = point.lng, y = point.lat;
+        var inside = false;
+        for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+          var xi = polygon[i].lng, yi = polygon[i].lat;
+          var xj = polygon[j].lng, yj = polygon[j].lat;
+          var intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+          if (intersect) inside = !inside;
+        }
+        return inside;
+      }
 
       // ==================== 像素小人角色 ====================
       class PixelCharacter {
@@ -369,6 +384,16 @@
             var currentPixel = map.pointToPixel(player.point);
             var targetPixel = new BMapGL.Pixel(currentPixel.x + dx, currentPixel.y + dy);
             var targetPoint = map.pixelToPoint(targetPixel);
+
+            // 建筑碰撞检测
+            var blocked = false;
+            for (var i = 0; i < buildingPolygons.length; i++) {
+              if (isPointInPolygon(targetPoint, buildingPolygons[i])) {
+                blocked = true;
+                break;
+              }
+            }
+            if (blocked) return;
 
             var dir = 'down';
             if (dx > 0) dir = 'right';

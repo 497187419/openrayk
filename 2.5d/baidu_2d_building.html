@@ -109,6 +109,11 @@
 			<label>建筑颜色: <input type="color" id="colorInput" value="#4fc3f7"></label>
 		</div>
 		<div class="row">
+			<label style="display:flex;align-items:center;gap:6px;cursor:pointer;">
+				<input type="checkbox" id="showLoadedBuildings" checked> 显示已绘制建筑
+			</label>
+		</div>
+		<div class="row">
 			<button class="btn" id="finishBtn">完成绘制</button>
 			<button class="btn secondary" id="undoBtn">撤销上点</button>
 			<button class="btn danger" id="clearBtn">清除所有</button>
@@ -151,6 +156,47 @@
 			map.setDisplayOptions({ building: false, poi: false });
 			// 禁用双击缩放，避免与绘制操作冲突
 			map.disableDoubleClickZoom();
+
+			// ==================== 加载已绘制建筑数据 ====================
+			var loadedPrisms = [];
+			function loadBuildings() {
+				fetch('buildings.json')
+					.then(function(res) { return res.json(); })
+					.then(function(buildings) {
+						buildings.forEach(function(b) {
+							var path = b.coords.map(function(c) {
+								return new BMapGL.Point(c[0], c[1]);
+							});
+							var prism = new BMapGL.Prism(path, b.height, {
+								topFillColor: b.color,
+								topFillOpacity: 0.8,
+								sideFillColor: b.color,
+								sideFillOpacity: 0.9
+							});
+							loadedPrisms.push(prism);
+							if (document.getElementById('showLoadedBuildings').checked) {
+								map.addOverlay(prism);
+							}
+						});
+						console.log('已加载建筑数量: ' + buildings.length);
+					})
+					.catch(function(err) {
+						console.error('加载 buildings.json 失败:', err);
+					});
+			}
+			loadBuildings();
+
+			function toggleLoadedBuildings() {
+				var show = document.getElementById('showLoadedBuildings').checked;
+				loadedPrisms.forEach(function(p) {
+					if (show) {
+						map.addOverlay(p);
+					} else {
+						map.removeOverlay(p);
+					}
+				});
+			}
+			document.getElementById('showLoadedBuildings').addEventListener('change', toggleLoadedBuildings);
 
 			// ==================== 绘制状态管理 ====================
 			var drawingPoints = [];
